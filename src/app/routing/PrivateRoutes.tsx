@@ -81,7 +81,7 @@ const PrivateRoutes = () => {
         /> */}
         <Route path="/home" element={<HomeMain />} />
         {/* Water Admin routes */}
-        {/* <Route path="/Water/Admindashboard" element={<SidebarPage />}></Route> */}
+        <Route path="/Water/Admindashboard" element={<SidebarPage />}></Route> 
         <Route path="/BusSearch" element={<BusSearch />}></Route>
         <Route path="Water/Ships" element={<ShipsPage />}></Route>
         <Route path="Water/Employees" element={<EmployeePage />}></Route>
