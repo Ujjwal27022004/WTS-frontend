@@ -52,7 +52,7 @@ const AdminService = {
    */
   addShipDetails: async (shipDetail) => {
     try {
-      const response = await axios.post(`http://192.168.1.25:8085/api/admindetails/Shipadd`, shipDetail);
+      const response = await axios.post(`http://localhost:8085/api/admindetails/Shipadd`, shipDetail);
       console.log(response);
       return response.data;
     } catch (error) {
