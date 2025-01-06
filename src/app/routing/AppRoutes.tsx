@@ -11,6 +11,8 @@ import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage, useAuth } from "../modules/auth";
 import { App } from "../App";
+import HomeMain from "../pages/WaterTransport/Userinterface/HomeMain";
+import Search from "../pages/WaterTransport/Userinterface/Search";
 
 /**
  * Base URL of the website.
@@ -58,6 +60,8 @@ const AppRoutes: FC = () => {
           {auth ? (
             <>
               <Route path="/*" element={<PrivateRoutes />} />
+              <Route path="home" element={<HomeMain />} /> {/* HomeMain Route */}
+              <Route path="search" element={<Search />} /> {/* Search Route */}
               <Route index element={<Navigate to="/dashboard" />} />
             </>
           ) : (
@@ -65,10 +69,13 @@ const AppRoutes: FC = () => {
               <Route path="auth/*" element={<AuthPage />} />
               <Route path="*" element={<Navigate to="/auth" />} />
             </>
+
+            
           )}
         </Route>
       </Routes>
     </BrowserRouter>
+    
   );
 };
 export { AppRoutes };
