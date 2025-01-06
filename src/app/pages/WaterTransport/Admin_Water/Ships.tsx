@@ -1,46 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Pagination from "../../Pagination";
 import AddShip from "./AddShip";
-// import { AdminService } from "../../../../api/Service/AirTransport/Admin/AdminService";
-// Example static data for ships
-const mockShips = [
-  {
-    id: 1,
-    name: "Ship A",
-    type: "Cargo",
-    capacity: 3000,
-    status: "Active",
-    available: true,
-  },
-  {
-    id: 2,
-    name: "Ship B",
-    type: "Passenger",
-    capacity: 1500,
-    status: "Inactive",
-    available: false,
-  },
-  {
-    id: 3,
-    name: "Ship C",
-    type: "Cargo",
-    capacity: 2500,
-    status: "Active",
-    available: true,
-  },
-];
+import { ShipDetails } from "../../../../api/Model/WaterTransport/Admin/ShipInterface";
+import { ShipService } from "../../../../api/Service/WaterTransport/Admin/ShipService";
+import axios from "axios";
 
 export const ShipsPage: React.FC = () => {
-  const [ships, setShips] = useState(mockShips);
+  const [ships, setShips] = useState<ShipDetails[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const [showAddShipModal, setShowAddShipModal] = useState(false);
   const [status, setStatus] = useState("");
 
-  const filteredShips = ships.filter((ship) =>
-    ship.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const shipService = new ShipService();
+
+  useEffect(() => {
+    const fetchShipDetails = async () => {
+      try {
+        const response = await fetch("/shipdetails");
+        if (!response.ok) throw new Error("Failed to fetch ship details");
+        const data = await response.json();
+        setShips(data);
+      } catch (error) {
+        console.error("Error fetching ship details:", error);
+        setShips([]); // Fallback to empty array if API fails
+      }
+    };
+
+    fetchShipDetails();
+  }, []);
+
+  const filteredShips = ships
+    .filter((ship) => ship.name.toLowerCase().includes(search.toLowerCase()))
+    .filter((ship) => (status ? ship.cruiseType === status : true));
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -55,29 +48,42 @@ export const ShipsPage: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(e.target.value);
 
-  const toggleAvailability = (id: number) => {
-    setShips(
-      ships.map((ship) =>
-        ship.id === id ? { ...ship, available: !ship.available } : ship
-      )
-    );
+  const toggleAvailability = async (id: number) => {
+    try {
+      await shipService.toggleAvailability(id);
+      setShips(
+        ships.map((ship) =>
+          ship.shipId === id
+            ? { ...ship, availability: !ship.availability }
+            : ship
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling availability:", error);
+    }
   };
 
-  // Define handleAddShip to handle adding a new ship
-  const handleAddShip = (newShip: {
-    name: string;
-    type: string;
-    capacity: number;
-    status: string;
-    available: boolean;
-  }) => {
-    const newShipWithId = { ...newShip, id: ships.length + 1 };
-    setShips([...ships, newShipWithId]);
+  const handleAddShip = async (newShip: ShipDetails) => {
+    try {
+      const response = await fetch("/admindetails/Shipadd", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newShip),
+      });
+
+      if (!response.ok) throw new Error("Failed to add new ship");
+
+      const data = await response.json();
+      setShips((prevShips) => [...prevShips, data]); // Update ships list with the new ship
+    } catch (error) {
+      console.error("Error adding new ship:", error);
+    }
   };
 
   return (
     <div className="card">
-      {/* Header */}
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
           <span className="card-label fw-bold fs-3 mb-1">Ships</span>
@@ -94,44 +100,27 @@ export const ShipsPage: React.FC = () => {
             value={search}
             onChange={handleSearchChange}
           />
-          {/* <button
-            type="button"
-            className="btn btn-light-primary border-0 rounded mx-2"
-          >
-            <i className="fs-2 bi bi-funnel" />
-            Filter
-          </button> */}
-
           <div className="d-flex align-items-center">
-            {/* begin::Label */}
             <span className="fs-7 fw-bolder text-gray-700 pe-4 text-nowrap d-none d-xxl-block">
               Sort By:
             </span>
-            {/* end::Label */}
-
-            {/* begin::Select */}
             <select
               className="form-select form-select-sm form-select-solid w-100px w-xxl-125px"
-              data-control="select2"
-              data-placeholder="All"
-              data-hide-search="true"
               defaultValue={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              <option value=""></option>
-              <option value="1">All</option>
-              <option value="2">Avaible</option>
-              <option value="3">Active</option>
-              <option value="3">Cargo</option>
-              <option value="3">Passenger</option>
+              <option value="">All</option>
+              <option value="Available">Available</option>
+              <option value="Active">Active</option>
+              <option value="Cargo">Cargo</option>
+              <option value="Passenger">Passenger</option>
             </select>
-            {/* end::Select  */}
           </div>
 
           <button
             type="button"
             className="btn btn-light-primary border-0 rounded mx-2"
-            onClick={() => setShowAddShipModal(true)} // Open the modal
+            onClick={() => setShowAddShipModal(true)}
           >
             <i className="fs-2 bi bi-plus" />
             Add New Ship
@@ -139,7 +128,6 @@ export const ShipsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Body */}
       <div className="card-body py-3">
         <div className="table-responsive">
           <table className="table table-hover table-rounded table-striped border gy-7 gs-7">
@@ -160,54 +148,28 @@ export const ShipsPage: React.FC = () => {
                   currentPage * entriesPerPage
                 )
                 .map((ship) => (
-                  <tr key={ship.id}>
+                  <tr key={ship.shipId}>
                     <td>{ship.name}</td>
-                    <td>{ship.type}</td>
-                    <td>{ship.capacity}</td>
-                    <td>{ship.status}</td>
+                    <td>{ship.cruiseType}</td>
+                    <td>{(ship.capacity = 200)}</td>
+                    <td>{ship.availability ? "Available" : "Unavailable"}</td>
                     <td>
                       <input
                         type="checkbox"
-                        checked={ship.available}
-                        onChange={() => toggleAvailability(ship.id)}
+                        checked={ship.availability}
+                        onChange={() => toggleAvailability(ship.shipId)}
                       />
                     </td>
                     <td className="text-center">
                       <div className="d-flex flex-row align-items-center">
-                        <button
-                          className="btn btn-icon btn-bg-light btn-sm me-1"
-                          //Viewbutton functionality
-                        >
-                          <i className="ki-duotone ki-eye fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-eye fs-3 text-primary"></i>
                         </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Edit button functionality
-                        >
-                          <i className="ki-duotone ki-pencil fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-pencil fs-3 text-primary"></i>
                         </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Delete button functionality
-                        >
-                          <i className="ki-duotone ki-trash fs-3 text-danger">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                            <span className="path4"></span>
-                            <span className="path5"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-trash fs-3 text-danger"></i>
                         </button>
                       </div>
                     </td>
@@ -218,7 +180,6 @@ export const ShipsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="card-footer">
         <Pagination
           currentPage={currentPage}
@@ -229,7 +190,6 @@ export const ShipsPage: React.FC = () => {
         />
       </div>
 
-      {/* Add Ship Modal */}
       {showAddShipModal && (
         <AddShip
           onClose={() => setShowAddShipModal(false)}

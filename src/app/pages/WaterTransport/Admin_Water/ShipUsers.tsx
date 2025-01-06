@@ -1,24 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { UserService } from "../../../../api/Service/WaterTransport/User/UserService";
+import { User } from "../../../../api/Model/WaterTransport/User/user";
 import Pagination from "../../Pagination";
-// import AddShipUser from "./AddShipUser";
-
-// Example static data for ship users
-const mockShipUsers = [
-  { id: 1, name: "John Doe", age: 38, role: "Captain", active: true },
-  { id: 2, name: "Jane Smith", age: 34, role: "Crew Member", active: false },
-  { id: 3, name: "William Brown", age: 29, role: "Deckhand", active: true },
-];
 
 export const ShipUserPage: React.FC = () => {
-  const [users, setUsers] = useState(mockShipUsers);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(5);
-  const [search, setSearch] = useState("");
-  const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [status, setStatus] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [entriesPerPage, setEntriesPerPage] = useState<number>(5);
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
+  const userService = new UserService();
+
+  // Fetch users from API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const userData = await userService.getAllUsers();
+        setUsers(userData);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  // Filter users based on search and status
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(search.toLowerCase()) &&
+      (status === "" || user.role === status) // Adjust as per the API role structure
   );
 
   const handlePageChange = (page: number) => setCurrentPage(page);
@@ -33,19 +44,6 @@ export const ShipUserPage: React.FC = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(e.target.value);
-
-  const toggleActiveStatus = (id: number) => {
-    setUsers(
-      users.map((user) =>
-        user.id === id ? { ...user, active: !user.active } : user
-      )
-    );
-  };
-
-  const handleAddUser = (newUser: { name: string; age: number; role: string; active: boolean }) => {
-    const newUserWithId = { ...newUser, id: users.length + 1 };
-    setUsers([...users, newUserWithId]);
-  };
 
   return (
     <div className="card">
@@ -66,35 +64,21 @@ export const ShipUserPage: React.FC = () => {
             value={search}
             onChange={handleSearchChange}
           />
-
           <div className="d-flex align-items-center">
             <span className="fs-7 fw-bolder text-gray-700 pe-4 text-nowrap d-none d-xxl-block">
               Filter By Role:
             </span>
             <select
               className="form-select form-select-sm form-select-solid w-100px w-xxl-125px"
-              data-control="select2"
-              data-placeholder="All"
-              data-hide-search="true"
-              defaultValue={status}
+              value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              <option value=""></option>
-              <option value="1">All</option>
-              <option value="2">Captain</option>
-              <option value="3">Crew Member</option>
-              <option value="4">Deckhand</option>
+              <option value="">All</option>
+              <option value="Captain">Captain</option>
+              <option value="Crew Member">Crew Member</option>
+              <option value="Deckhand">Deckhand</option>
             </select>
           </div>
-
-          <button
-            type="button"
-            className="btn btn-light-primary border-0 rounded mx-2"
-            onClick={() => setShowAddUserModal(true)}
-          >
-            <i className="fs-2 bi bi-plus" />
-            Add New User
-          </button>
         </div>
       </div>
 
@@ -105,55 +89,30 @@ export const ShipUserPage: React.FC = () => {
             <thead>
               <tr className="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                 <th>Name</th>
-                <th>Age</th>
-                <th>Role</th>
+                <th>Email</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers
-                .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                .slice(
+                  (currentPage - 1) * entriesPerPage,
+                  currentPage * entriesPerPage
+                )
                 .map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.age}</td>
-                    <td>{user.role}</td>
+                  <tr key={user.userid}>
+                    <td>{user.username}</td>
+                    <td>{user.email}</td>
                     <td className="text-center">
                       <div className="d-flex flex-row align-items-center">
-                        <button
-                          className="btn btn-icon btn-bg-light btn-sm me-1"
-                          // View button functionality
-                        >
-                          <i className="ki-duotone ki-eye fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-eye fs-3 text-primary" />
                         </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Edit button functionality
-                        >
-                          <i className="ki-duotone ki-pencil fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-pencil fs-3 text-primary" />
                         </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Delete button functionality
-                        >
-                          <i className="ki-duotone ki-trash fs-3 text-danger">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                            <span className="path4"></span>
-                            <span className="path5"></span>
-                          </i>
+                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
+                          <i className="ki-duotone ki-trash fs-3 text-danger" />
                         </button>
                       </div>
                     </td>
@@ -174,14 +133,6 @@ export const ShipUserPage: React.FC = () => {
           onEntriesPerPageChange={handleEntriesPerPageChange}
         />
       </div>
-
-      {/* Add User Modal */}
-      {/* {showAddUserModal && (
-        <AddShipUser
-          onClose={() => setShowAddUserModal(false)}
-          onAdd={handleAddUser}
-        />
-      )} */}
     </div>
   );
 };
