@@ -43,6 +43,7 @@ import AirDetailsPage from "../pages/AirTransport/UserUI_A/AirDetails";
 import SummaryAir from "../pages/AirTransport/UserUI_A/SummaryAir";
 import BusDetails from "../pages/GroundTransport/UserUI_G/BusDetails";
 import SummaryGround from "../pages/GroundTransport/UserUI_G/SummaryGround";
+import CruisePage from "../pages/WaterTransport/Userinterface/CruiseCard";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -96,6 +97,7 @@ const PrivateRoutes = () => {
         <Route path="Water/Shipuser" element={<ShipUserPage />}></Route>
         <Route path="Water/booking" element={<ShipBookingPage />}></Route>
         <Route path="Water/FAQ" element={<FAQPage />}></Route>
+        <Route path="Water/booking-process" element={<CruisePage />}></Route>
 
         {/* Ground Admin Routes */}
         <Route path="Ground/homepage" element={<BusBooking />}></Route>

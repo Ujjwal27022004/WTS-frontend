@@ -101,12 +101,21 @@
 // export default CruisePage;
 
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
+
 
 const CruisePage: React.FC = () => {
   // Retrieve the ships data from location state
   const { state } = useLocation();
   const ships = state?.ships || []; // Ensure ships data exists
+  const navigate = useNavigate();
+
+  const handleBookNow = (ship: any) => {
+    navigate("/Water/booking-process", { state: ship });
+  };
+  
 
   return (
     <div className="container mt-4">
@@ -127,13 +136,20 @@ const CruisePage: React.FC = () => {
                   <div className="card-body">
                     <h5 className="card-title">{ship.name}</h5>
                     <p className="card-text">{ship.description}</p>
+                    <p className="card-text">Capacity : {ship.capacity}</p>
+                    <p className="card-text">Source : {ship.source}</p>
+                    <p className="card-text">Destination : {ship.destination}</p>
+                    <p className="card-text">CruiseLength : {ship.cruiseLength}</p>
+                    <p className="card-text">CruiseType : {ship.cruiseType}</p>
+                    <p className="card-text">Date : {ship.date}</p>
+                    <p className="card-text">Availability : {ship.availability}</p>
                     <p className="card-text">
-                      <small className="text-muted">Rating: {ship.rating}</small>
+                      <small className="text-muted">Rating : {ship.rating}</small>
                     </p>
                     <p className="card-text">
                       <strong>Price: ₹{ship.price}</strong>
                     </p>
-                    <button className="btn btn-primary">Book Now</button>
+                    <button className="btn btn-primary" onClick={() => handleBookNow(ship)}>Book Now</button>
                   </div>
                 </div>
               </div>
