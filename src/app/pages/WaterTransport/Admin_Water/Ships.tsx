@@ -168,6 +168,7 @@ export const ShipsPage: React.FC = () => {
                         <button className="btn btn-icon btn-bg-light btn-sm me-1">
                           <i className="ki-duotone ki-pencil fs-3 text-primary"></i>
                         </button>
+
                         <button className="btn btn-icon btn-bg-light btn-sm me-1">
                           <i className="ki-duotone ki-trash fs-3 text-danger"></i>
                         </button>
