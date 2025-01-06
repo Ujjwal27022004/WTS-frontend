@@ -1,36 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { UserService } from "../../../../api/Service/WaterTransport/User/UserService";
 import { User } from "../../../../api/Model/WaterTransport/User/user";
 import Pagination from "../../Pagination";
+import "./ShipUserPage.css"; // Add a CSS file for modal styling
 
 export const ShipUserPage: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [entriesPerPage, setEntriesPerPage] = useState<number>(5);
-  const [search, setSearch] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-
   const userService = new UserService();
 
-  // Fetch users from API
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [search, setSearch] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const userData = await userService.getAllUsers();
-        setUsers(userData);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-      }
-    };
     fetchUsers();
   }, []);
 
-  // Filter users based on search and status
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(search.toLowerCase()) &&
-      (status === "" || user.role === status) // Adjust as per the API role structure
-  );
+  const fetchUsers = async () => {
+    try {
+      const allUsers = await userService.getAllUsers();
+      setUsers(allUsers);
+      setFilteredUsers(allUsers);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -42,8 +39,31 @@ export const ShipUserPage: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+    setFilteredUsers(
+      users.filter((user: User) =>
+        user.username.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    );
+  };
+
+  const handleEdit = (user: User) => {
+    setEditUser(user);
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editUser) return;
+    try {
+      await userService.editUser(editUser);
+      fetchUsers();
+      setShowEditModal(false);
+      setEditUser(null);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
 
   return (
     <div className="card">
@@ -56,29 +76,15 @@ export const ShipUserPage: React.FC = () => {
           </span>
         </h3>
         <div className="card-toolbar d-flex flex-end">
+          {/* Search by Name */}
           <input
             type="text"
             className="form-control border-1 border-primary border-opacity-25 mx-2 text-gray-800"
             style={{ width: "12rem" }}
-            placeholder="Search Ship Users"
+            placeholder="Search by Name"
             value={search}
             onChange={handleSearchChange}
           />
-          <div className="d-flex align-items-center">
-            <span className="fs-7 fw-bolder text-gray-700 pe-4 text-nowrap d-none d-xxl-block">
-              Filter By Role:
-            </span>
-            <select
-              className="form-select form-select-sm form-select-solid w-100px w-xxl-125px"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="">All</option>
-              <option value="Captain">Captain</option>
-              <option value="Crew Member">Crew Member</option>
-              <option value="Deckhand">Deckhand</option>
-            </select>
-          </div>
         </div>
       </div>
 
@@ -99,22 +105,17 @@ export const ShipUserPage: React.FC = () => {
                   (currentPage - 1) * entriesPerPage,
                   currentPage * entriesPerPage
                 )
-                .map((user) => (
+                .map((user: User) => (
                   <tr key={user.userid}>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td className="text-center">
-                      <div className="d-flex flex-row align-items-center">
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-eye fs-3 text-primary" />
-                        </button>
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-pencil fs-3 text-primary" />
-                        </button>
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-trash fs-3 text-danger" />
-                        </button>
-                      </div>
+                    <td>{user.username || "No Name"}</td>
+                    <td>{user.email || "No Email"}</td>
+                    <td>
+                      <button
+                        className="btn btn-light mx-1"
+                        onClick={() => handleEdit(user)}
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -133,6 +134,50 @@ export const ShipUserPage: React.FC = () => {
           onEntriesPerPageChange={handleEntriesPerPageChange}
         />
       </div>
+
+      {/* Edit User Modal */}
+      {showEditModal && editUser && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Edit User</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleEditSubmit();
+              }}
+            >
+              <label>Name</label>
+              <input
+                type="text"
+                value={editUser?.username || ""}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, username: e.target.value })
+                }
+              />
+              <label>Email</label>
+              <input
+                type="email"
+                value={editUser?.email || ""}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, email: e.target.value })
+                }
+              />
+              <div className="modal-actions">
+                <button type="submit" className="btn btn-primary">
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
