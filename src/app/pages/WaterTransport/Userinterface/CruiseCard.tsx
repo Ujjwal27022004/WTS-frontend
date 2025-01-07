@@ -113,7 +113,7 @@ const CruisePage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBookNow = (ship: any) => {
-    navigate("/Water/booking-process", { state: ship });
+    navigate("/ship-details", { state: ship });
   };
   
 

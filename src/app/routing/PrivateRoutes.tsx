@@ -97,7 +97,6 @@ const PrivateRoutes = () => {
         <Route path="Water/Shipuser" element={<ShipUserPage />}></Route>
         <Route path="Water/booking" element={<ShipBookingPage />}></Route>
         <Route path="Water/FAQ" element={<FAQPage />}></Route>
-        <Route path="Water/booking-process" element={<CruisePage />}></Route>
 
         {/* Ground Admin Routes */}
         <Route path="Ground/homepage" element={<BusBooking />}></Route>
@@ -124,6 +123,7 @@ const PrivateRoutes = () => {
         {/* user section water  page */}
 
         <Route path="water/search" element={<Search />} />
+        <Route path="Water/booking-process" element={<ShipDetailsPage />}></Route>
 
         <Route path="/ship-details" element={<ShipDetailsPage />} />
 
