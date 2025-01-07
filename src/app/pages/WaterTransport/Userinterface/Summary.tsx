@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { FaPhone, FaCreditCard, FaWallet } from "react-icons/fa";
-
+import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
 const SummaryPage: React.FC = () => {
   const location = useLocation();
   const bookingDetails = location.state as {
@@ -22,20 +22,54 @@ const SummaryPage: React.FC = () => {
     };
   };
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
   const [passengers, setPassengers] = useState<any[]>([]);
   const [showPassengerForm, setShowPassengerForm] = useState(false);
   const [newPassenger, setNewPassenger] = useState({
     name: "",
-    email: "",
-    phone: "",
+    age: "",
+    gender: "",
   });
 
-  const handleAddPassenger = () => {
-    setPassengers((prevPassengers) => [...prevPassengers, newPassenger]);
-    setShowPassengerForm(false); // Hide the form after adding the passenger
-    setNewPassenger({ name: "", email: "", phone: "" }); // Reset the form
+  const passengerService = new PassengerService();
+
+  // Fetch passengers when the component mounts
+  // useEffect(() => {
+  //   const fetchPassengers = async () => {
+  //     try {
+  //       const data = await passengerService.getAllPassengerDetails();
+  //       setPassengers(data); // Set the data in state
+  //     } catch (error) {
+  //       console.error("Error loading passengers:", error);
+  //     }
+  //   };
+
+  //   fetchPassengers();
+  // }, []); // Empty dependency array ensures it runs once on mount
+
+  const handleAddPassenger = async () => {
+    try {
+      // Convert age to a number before making the API request
+      const passengerData = {
+        ...newPassenger,
+        age: parseInt(newPassenger.age), // Convert the age string to a number
+      };
+  
+      // Make a POST request to the backend to create a new passenger
+      const response = await passengerService.createPassengerDetails(passengerData);
+  
+      // On success, update the passengers state and reset the form
+      setPassengers((prevPassengers) => [...prevPassengers, passengerData]);
+      setShowPassengerForm(false); // Hide the form after adding the passenger
+      setNewPassenger({ name: "", age: "", gender: "" }); // Reset the form
+  
+      // Optionally, display a success message
+      alert(response); // Assuming the response from your backend is the success message
+    } catch (error) {
+      console.error("Error adding passenger:", error);
+      // Optionally, display an error message
+      alert("Error adding passenger");
+    }
   };
 
   return (
@@ -122,36 +156,39 @@ const SummaryPage: React.FC = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="age">Age</label>
                     <input
-                      type="email"
+                      type="number"
                       className="form-control"
-                      id="email"
-                      value={newPassenger.email}
+                      id="age"
+                      value={newPassenger.age}
                       onChange={(e) =>
                         setNewPassenger({
                           ...newPassenger,
-                          email: e.target.value,
+                          age: e.target.value,
                         })
                       }
-                      placeholder="Enter Email"
+                      placeholder="Enter Age"
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="phone">Phone</label>
-                    <input
-                      type="text"
+                    <label htmlFor="gender">Gender</label>
+                    <select
                       className="form-control"
-                      id="phone"
-                      value={newPassenger.phone}
+                      id="gender"
+                      value={newPassenger.gender}
                       onChange={(e) =>
                         setNewPassenger({
                           ...newPassenger,
-                          phone: e.target.value,
+                          gender: e.target.value,
                         })
                       }
-                      placeholder="Enter Mobile No"
-                    />
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
                   </div>
                   <button
                     type="button"
@@ -171,7 +208,8 @@ const SummaryPage: React.FC = () => {
                 <ul>
                   {passengers.map((passenger, index) => (
                     <li key={index}>
-                      {passenger.name} - {passenger.email} - {passenger.phone}
+                      {passenger.name} - Age: {passenger.age} - Gender:{" "}
+                      {passenger.gender}
                     </li>
                   ))}
                 </ul>
