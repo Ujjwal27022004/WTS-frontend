@@ -8,9 +8,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const [type, setType] = useState("water");
   const { saveAuth } = useAuth();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -25,10 +27,16 @@ const Login = () => {
 
     const loginData: LoginBasicInfo = { email, password };
 
-    const userData = await AuthService.login(loginData);
+    let userData;
+    if (isAdmin) {
+      userData = await AuthService.Adminlogin(loginData);
+    } else {
+      userData = await AuthService.login(loginData);
+    }
+
     console.log("User data:", userData);
 
-    if(userData.status){
+    if (userData.status) {
       const userData = {
         api_token: "dummy-token",
         isAuthenticated: true,
@@ -36,28 +44,39 @@ const Login = () => {
       // Save user state
       saveAuth(userData);
 
-      // Navigate based on the service type
-      switch (type) {
-        case "water":
-          navigate("/home");
-          break;
-        case "air":
-          navigate("/air/homepage");
-          break;
-        case "ground":
-          navigate("/ground/homepage");
-          break;
-        default:
-          navigate("/");
+      // Navigate based on user type
+      if (isAdmin) {
+        navigate("/Water/Admindashboard");
+      } else {
+        switch (type) {
+          case "water":
+            navigate("/home");
+            break;
+          case "air":
+            navigate("/air/homepage");
+            break;
+          case "ground":
+            navigate("/ground/homepage");
+            break;
+          default:
+            navigate("/");
+        }
       }
-    }else{
+    } else {
       setError("Login failed. Please check your credentials.");
     }
-
   };
 
   return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#f0f8ff" }}>
+      <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            backgroundColor: "#f0f8ff",
+          }}
+      >
         <form
             onSubmit={handleLogin}
             style={{
@@ -69,7 +88,9 @@ const Login = () => {
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             }}
         >
-          <h2 className="text-center" style={{ color: "#17a2b8", marginBottom: "20px" }}>Login</h2>
+          <h2 className="text-center" style={{ color: "#17a2b8", marginBottom: "20px" }}>
+            {isAdmin ? "Admin Login" : "User Login"}
+          </h2>
 
           <div className="form-group">
             <label htmlFor="email" style={{ fontWeight: "bold" }}>Email</label>
@@ -121,14 +142,41 @@ const Login = () => {
 
           <div className="text-center mt-4" style={{ marginTop: "20px" }}>
             <p>
-              Don't have an account?{' '}
-              <a
-                  href="auth/registration"
-                  style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
-              >
-                Register here
-              </a>
+              {isAdmin ? (
+                  <>
+                    Not an admin?{' '}
+                    <a
+                        href="#"
+                        onClick={() => setIsAdmin(false)}
+                        style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
+                    >
+                      Login as User
+                    </a>
+                  </>
+              ) : (
+                  <>
+                    Are you an admin?{' '}
+                    <a
+                        href="#"
+                        onClick={() => setIsAdmin(true)}
+                        style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
+                    >
+                      Login as Admin
+                    </a>
+                  </>
+              )}
             </p>
+            {!isAdmin && (
+                <p>
+                  Don't have an account?{' '}
+                  <a
+                      href="auth/registration"
+                      style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
+                  >
+                    Register here
+                  </a>
+                </p>
+            )}
           </div>
         </form>
       </div>
@@ -136,4 +184,3 @@ const Login = () => {
 };
 
 export default Login;
-
