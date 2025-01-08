@@ -15,6 +15,17 @@ export const AuthService = {
       );
     }
   },
+  Adminlogin: async (loginData: LoginBasicInfo): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_URL}/api/v1/user/Adminlogin`, loginData);
+      return response.data; // Return the API response data
+    } catch (error: any) {
+      console.error("Error during login:", error.response?.data || error.message);
+      throw new Error(
+          error.response?.data?.message || "Login failed. Please try again."
+      );
+    }
+  },
   signup: async (SignUpData: SignUpBasicInfo): Promise<any> => {
     try {
       const response = await axios.post(`${API_URL}/api/v1/user/signup`,SignUpData);
