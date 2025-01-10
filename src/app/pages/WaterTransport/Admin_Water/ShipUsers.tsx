@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { UserService } from "../../../../api/Service/WaterTransport/User/UserService";
 import { User } from "../../../../api/Model/WaterTransport/User/user";
 import Pagination from "../../Pagination";
-import "./ShipUserPage.css"; // Add a CSS file for modal styling
 
 export const ShipUserPage: React.FC = () => {
   const userService = new UserService();
@@ -11,6 +10,7 @@ export const ShipUserPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [search, setSearch] = useState("");
+  const [searchId, setSearchId] = useState(""); // State for searching by ID
   const [showEditModal, setShowEditModal] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
@@ -18,6 +18,10 @@ export const ShipUserPage: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    console.log("Edit Modal State:", showEditModal, "Edit User:", editUser);
+  }, [showEditModal, editUser]);
 
   const fetchUsers = async () => {
     try {
@@ -48,7 +52,17 @@ export const ShipUserPage: React.FC = () => {
     );
   };
 
+  const handleSearchById = async () => {
+    try {
+      const user = await userService.getUserById(parseInt(searchId, 10));
+      setFilteredUsers(user ? [user] : []);
+    } catch (error) {
+      console.error("Error searching user by ID:", error);
+    }
+  };
+
   const handleEdit = (user: User) => {
+    console.log("Editing user:", user); // Debugging log
     setEditUser(user);
     setShowEditModal(true);
   };
@@ -85,6 +99,23 @@ export const ShipUserPage: React.FC = () => {
             value={search}
             onChange={handleSearchChange}
           />
+
+          {/* Search by ID */}
+          <input
+            type="text"
+            className="form-control border-1 border-secondary border-opacity-25 mx-2 text-gray-800"
+            style={{ width: "12rem" }}
+            placeholder="Search by ID"
+            value={searchId}
+            onChange={(e) => setSearchId(e.target.value)}
+          />
+          <button
+            className="btn btn-primary mx-2"
+            onClick={handleSearchById}
+            disabled={!searchId}
+          >
+            Search by ID
+          </button>
         </div>
       </div>
 
@@ -111,7 +142,7 @@ export const ShipUserPage: React.FC = () => {
                     <td>{user.email || "No Email"}</td>
                     <td>
                       <button
-                        className="btn btn-light mx-1"
+                        className="btn btn-dark mx-1"
                         onClick={() => handleEdit(user)}
                       >
                         Edit
@@ -137,8 +168,31 @@ export const ShipUserPage: React.FC = () => {
 
       {/* Edit User Modal */}
       {showEditModal && editUser && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+          onClick={() => setShowEditModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.25)",
+              zIndex: 1001,
+            }}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+          >
             <h3>Edit User</h3>
             <form
               onSubmit={(e) => {
@@ -153,6 +207,7 @@ export const ShipUserPage: React.FC = () => {
                 onChange={(e) =>
                   setEditUser({ ...editUser, username: e.target.value })
                 }
+                style={{ display: "block", marginBottom: "10px" }}
               />
               <label>Email</label>
               <input
@@ -161,14 +216,31 @@ export const ShipUserPage: React.FC = () => {
                 onChange={(e) =>
                   setEditUser({ ...editUser, email: e.target.value })
                 }
+                style={{ display: "block", marginBottom: "10px" }}
               />
-              <div className="modal-actions">
-                <button type="submit" className="btn btn-primary">
+              <div style={{ marginTop: "20px", textAlign: "right" }}>
+                <button
+                  type="submit"
+                  style={{
+                    marginRight: "10px",
+                    padding: "10px 20px",
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                  }}
+                >
                   Save
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                  }}
                   onClick={() => setShowEditModal(false)}
                 >
                   Cancel
