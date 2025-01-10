@@ -1,186 +1,239 @@
 import React, { useState } from "react";
-import { useAuth } from "../../auth/core/Auth";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../../../../api/Service/AuthServicewater";
 import { LoginBasicInfo } from "../../../../api/Model/AuthInterfaceWater";
+import {useAuth} from "../core/Auth.tsx";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate();
-  const [type, setType] = useState("water");
-  const { saveAuth } = useAuth();
+const Login : React.FC = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [selectedOption, setSelectedOption] = useState("");
+    const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const  {saveAuth} = useAuth();
 
-    if (!email || !password) {
-      setError("Email and Password are required.");
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    const loginData: LoginBasicInfo = { email, password };
-
-    let userData;
-    if (isAdmin) {
-      userData = await AuthService.Adminlogin(loginData);
-    } else {
-      userData = await AuthService.login(loginData);
-    }
-
-    console.log("User data:", userData);
-
-    if (userData.status) {
-      const userData = {
-        api_token: "dummy-token",
-        isAuthenticated: true,
-      };
-      // Save user state
-      saveAuth(userData);
-
-      // Navigate based on user type
-      if (isAdmin) {
-        navigate("/Water/Admindashboard");
-      } else {
-        switch (type) {
-          case "water":
-            navigate("/home");
-            break;
-          case "air":
-            navigate("/air/homepage");
-            break;
-          case "ground":
-            navigate("/ground/homepage");
-            break;
-          default:
-            navigate("/");
+    const validateForm = () => {
+        if (!email || !password || !selectedOption) {
+            setError("All fields are required. Please complete the form.");
+            return false;
         }
-      }
-    } else {
-      setError("Login failed. Please check your credentials.");
-    }
-  };
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            setError("Please enter a valid email address.");
+            return false;
+        }
+        return true;
+    };
 
-  return (
-      <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            backgroundColor: "#f0f8ff",
-          }}
-      >
-        <form
-            onSubmit={handleLogin}
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!validateForm()) return;
+
+        const loginData: LoginBasicInfo = {email, password};
+
+        try {
+            const [adminData, userData] = await Promise.all([
+                AuthService.Adminlogin(loginData),
+                AuthService.login(loginData),
+            ]);
+
+            if (adminData.status && adminData.role === "admin") {
+                console.log("Navigating to Admin Dashboard");
+                saveAuth(adminData);
+                navigate("/Water/Admindashboard");
+            } else if (userData.status && userData.role === "user") {
+                console.log("Navigating to User Dashboard");
+                saveAuth(userData);
+                navigate("/home");
+            } else {
+                setError("Login failed. Please check your credentials.");
+            }
+        } catch (err) {
+            setError("An unexpected error occurred. Please try again later.");
+        }
+    };
+
+    return (
+        <div
             style={{
-              maxWidth: "400px",
-              width: "100%",
-              backgroundColor: "#ffffff",
-              padding: "20px",
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+                backgroundColor: "#f7f9fc",
+                padding: "20px",
             }}
         >
-          <h2 className="text-center" style={{ color: "#17a2b8", marginBottom: "20px" }}>
-            {isAdmin ? "Admin Login" : "User Login"}
-          </h2>
-
-          <div className="form-group">
-            <label htmlFor="email" style={{ fontWeight: "bold" }}>Email</label>
-            <input
-                type="email"
-                id="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
+            <form
+                onSubmit={handleLogin}
+                style={{
+                    maxWidth: "400px",
+                    width: "100%",
+                    backgroundColor: "#ffffff",
+                    padding: "30px",
+                    borderRadius: "12px",
+                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
                 }}
-                className="form-control"
-                style={{ marginBottom: "15px" }}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password" style={{ fontWeight: "bold" }}>Password</label>
-            <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
-                className="form-control"
-                style={{ marginBottom: "15px" }}
-            />
-          </div>
-
-          {error && (
-              <div className="alert alert-danger" style={{ marginBottom: "15px" }}>
-                {error}
-              </div>
-          )}
-
-          <div className="text-center">
-            <button
-                type="submit"
-                className="btn btn-info"
-                style={{ width: "100%", padding: "10px" }}
             >
-              Login
-            </button>
-          </div>
+                <h2
+                    className="text-center"
+                    style={{
+                        color: "#007bff",
+                        marginBottom: "20px",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Login
+                </h2>
 
-          <div className="text-center mt-4" style={{ marginTop: "20px" }}>
-            <p>
-              {isAdmin ? (
-                  <>
-                    Not an admin?{' '}
-                    <a
-                        href="#"
-                        onClick={() => setIsAdmin(false)}
-                        style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
+                <div className="form-group">
+                    <label
+                        htmlFor="email"
+                        style={{
+                            fontWeight: "bold",
+                            fontSize: "14px",
+                            marginBottom: "8px",
+                            display: "block",
+                        }}
                     >
-                      Login as User
-                    </a>
-                  </>
-              ) : (
-                  <>
-                    Are you an admin?{' '}
-                    <a
-                        href="#"
-                        onClick={() => setIsAdmin(true)}
-                        style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
-                    >
-                      Login as Admin
-                    </a>
-                  </>
-              )}
-            </p>
-            {!isAdmin && (
-                <p>
-                  Don't have an account?{' '}
-                  <a
-                      href="auth/registration"
-                      style={{ color: "#17a2b8", textDecoration: "none", fontWeight: "bold" }}
-                  >
-                    Register here
-                  </a>
-                </p>
-            )}
-          </div>
-        </form>
-      </div>
-  );
-};
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError("");
+                        }}
+                        className="form-control"
+                        style={{
+                            marginBottom: "15px",
+                            padding: "10px",
+                            border: "1px solid #ced4da",
+                            borderRadius: "8px",
+                            width: "100%",
+                        }}
+                    />
+                </div>
 
+                <div className="form-group">
+                    <label
+                        htmlFor="password"
+                        style={{
+                            fontWeight: "bold",
+                            fontSize: "14px",
+                            marginBottom: "8px",
+                            display: "block",
+                        }}
+                    >
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setError("");
+                        }}
+                        className="form-control"
+                        style={{
+                            marginBottom: "15px",
+                            padding: "10px",
+                            border: "1px solid #ced4da",
+                            borderRadius: "8px",
+                            width: "100%",
+                        }}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <p style={{fontWeight: "bold", marginBottom: "10px"}}>
+                        Select an Option:
+                    </p>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            gap: "10px",
+                        }}
+                    >
+                        {["Water", "Air", "Ground"].map((option) => (
+                            <button
+                                type="button"
+                                key={option}
+                                className={`btn ${
+                                    selectedOption === option
+                                        ? "btn-primary"
+                                        : "btn-outline-primary"
+                                }`}
+                                onClick={() => setSelectedOption(option)}
+                                style={{
+                                    flex: "1",
+                                    padding: "10px",
+                                    borderRadius: "8px",
+                                    transition: "all 0.3s ease",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {option}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {error && (
+                    <div
+                        className="alert alert-danger"
+                        style={{
+                            marginTop: "15px",
+                            padding: "10px",
+                            borderRadius: "8px",
+                            fontSize: "14px",
+                            textAlign: "center",
+                        }}
+                    >
+                        {error}
+                    </div>
+                )}
+
+                <div className="text-center" style={{marginTop: "20px"}}>
+                    <button
+                        type="submit"
+                        className="btn btn-primary"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Login
+                    </button>
+                </div>
+
+                <div className="text-center mt-4" style={{marginTop: "20px"}}>
+                    <p style={{fontSize: "14px"}}>
+                        Don't have an account?{" "}
+                        <a
+                            href="registration"
+                            style={{
+                                color: "#007bff",
+                                textDecoration: "none",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Register here
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    );
+}
 export default Login;
