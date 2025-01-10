@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "../../Pagination";
 import AddShip from "./AddShip";
+import EditShip from "./EditShip"; // Import the EditShip component
 import { ShipDetails } from "../../../../api/Model/WaterTransport/Admin/ShipInterface";
 import { ShipService } from "../../../../api/Service/WaterTransport/Admin/ShipService";
-import axios from "axios";
 
 export const ShipsPage: React.FC = () => {
   const [ships, setShips] = useState<ShipDetails[]>([]);
@@ -11,6 +11,8 @@ export const ShipsPage: React.FC = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const [showAddShipModal, setShowAddShipModal] = useState(false);
+  const [showEditShipModal, setShowEditShipModal] = useState(false); // State for Edit Modal
+  const [selectedShip, setSelectedShip] = useState<ShipDetails | null>(null); // State for the selected ship
   const [status, setStatus] = useState("");
 
   const shipService = new ShipService();
@@ -65,7 +67,7 @@ export const ShipsPage: React.FC = () => {
 
   const handleAddShip = async (newShip: ShipDetails) => {
     try {
-      const response = await fetch("/admindetails/Shipadd", {
+      const response = await fetch("api/admindetails/Shipadd", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,6 +82,19 @@ export const ShipsPage: React.FC = () => {
     } catch (error) {
       console.error("Error adding new ship:", error);
     }
+  };
+
+  const handleEditShip = (ship: ShipDetails) => {
+    setSelectedShip(ship); // Set the ship to be edited
+    setShowEditShipModal(true); // Show the Edit modal
+  };
+
+  const handleUpdateShip = (updatedShip: ShipDetails) => {
+    setShips((prevShips) =>
+      prevShips.map((ship) =>
+        ship.shipId === updatedShip.shipId ? updatedShip : ship
+      )
+    );
   };
 
   return (
@@ -151,7 +166,7 @@ export const ShipsPage: React.FC = () => {
                   <tr key={ship.shipId}>
                     <td>{ship.name}</td>
                     <td>{ship.cruiseType}</td>
-                    <td>{(ship.capacity = 200)}</td>
+                    <td>{ship.capacity}</td>
                     <td>{ship.availability ? "Available" : "Unavailable"}</td>
                     <td>
                       <input
@@ -162,15 +177,17 @@ export const ShipsPage: React.FC = () => {
                     </td>
                     <td className="text-center">
                       <div className="d-flex flex-row align-items-center">
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-eye fs-3 text-primary"></i>
+                        <button
+                          className="btn btn-sm btn-light-primary me-2"
+                          onClick={() => handleEditShip(ship)}
+                        >
+                          Edit Ship
                         </button>
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-pencil fs-3 text-primary"></i>
-                        </button>
-
-                        <button className="btn btn-icon btn-bg-light btn-sm me-1">
-                          <i className="ki-duotone ki-trash fs-3 text-danger"></i>
+                        <button
+                          className="btn btn-sm btn-light-danger"
+                          onClick={() => console.log("Delete Ship", ship.shipId)} // Replace with actual delete logic
+                        >
+                          Delete Ship
                         </button>
                       </div>
                     </td>
@@ -195,6 +212,14 @@ export const ShipsPage: React.FC = () => {
         <AddShip
           onClose={() => setShowAddShipModal(false)}
           onAdd={handleAddShip}
+        />
+      )}
+
+      {showEditShipModal && selectedShip && (
+        <EditShip
+          onClose={() => setShowEditShipModal(false)}
+          onEdit={handleUpdateShip}
+          ship={selectedShip}
         />
       )}
     </div>

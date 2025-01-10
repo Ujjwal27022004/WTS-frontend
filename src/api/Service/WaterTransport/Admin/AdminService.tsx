@@ -67,7 +67,7 @@ const AdminService = {
    */
   editShipDetails: async (shipDetail) => {
     try {
-      const response = await axios.put(`${API_URL}/api/admindetails/Shipedit`, shipDetail);
+      const response = await axios.put(`http://localhost:8085/api/admindetails/Shipedit`, shipDetail);
       return response.data;
     } catch (error) {
       throw error.response?.data || 'Error editing ship details';
