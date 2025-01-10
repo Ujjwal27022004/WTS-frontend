@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { FaPhone, FaCreditCard, FaWallet } from "react-icons/fa";
 import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
+import { useNavigate } from "react-router-dom";
 const SummaryPage: React.FC = () => {
   const location = useLocation();
   const bookingDetails = location.state as {
@@ -71,6 +72,31 @@ const SummaryPage: React.FC = () => {
       alert("Error adding passenger");
     }
   };
+
+  const navigate = useNavigate();
+
+const handlePayment = () => {
+  if (!selectedPaymentMethod) {
+    alert("Please select a payment method.");
+    return;
+  }
+
+  // Calculate total amount
+  const totalAmount = bookingDetails.cruise.price * bookingDetails.numTravelers;
+
+  // Simulate payment success and navigate to the receipt page
+  navigate("/receipt", {
+    state: {
+      cruise: bookingDetails.cruise,
+      travelDate: bookingDetails.travelDate,
+      numTravelers: bookingDetails.numTravelers,
+      userInfo: bookingDetails.userInfo,
+      paymentMethod: selectedPaymentMethod,
+      totalAmount: totalAmount,
+    },
+  });
+};
+
 
   return (
     <div className="container mt-4">
@@ -265,16 +291,17 @@ const SummaryPage: React.FC = () => {
 
           {/* Pay Now Button */}
           <button
-            className="btn btn-primary"
-            style={{
-              position: "absolute",
-              right: "20px",
-              bottom: "20px",
-            }}
-            disabled={!selectedPaymentMethod}
-          >
-            Pay Now
-          </button>
+  className="btn btn-primary"
+  style={{
+    position: "absolute",
+    right: "20px",
+    bottom: "20px",
+  }}
+  onClick={handlePayment}
+  disabled={!selectedPaymentMethod} // Disable button if no payment method is selected
+>
+  Pay Now
+</button>
         </div>
       </div>
     </div>

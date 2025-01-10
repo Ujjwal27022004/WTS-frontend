@@ -13,7 +13,7 @@ import { Logout, AuthPage, useAuth } from "../modules/auth";
 import { App } from "../App";
 import HomeMain from "../pages/WaterTransport/Userinterface/HomeMain";
 import Search from "../pages/WaterTransport/Userinterface/Search";
-
+import ReceiptPage from "../pages/WaterTransport/Userinterface/ReceiptPage";
 /**
  * Base URL of the website.
  *
@@ -62,6 +62,7 @@ const AppRoutes: FC = () => {
               <Route path="/*" element={<PrivateRoutes />} />
               <Route path="home" element={<HomeMain />} /> {/* HomeMain Route */}
               <Route path="search" element={<Search />} /> {/* Search Route */}
+              <Route path="/receipt" element={<ReceiptPage />} />
               <Route index element={<Navigate to="/dashboard" />} />
             </>
           ) : (
