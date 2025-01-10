@@ -1,33 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Base API URL from environment variables
 const API_URL = import.meta.env.VITE_APP_API_URL;
-
 const AdminService = {
   /**
-   * Fetch details of a specific admin by ID
-   * @param {string} adminId - The ID of the admin to fetch
-   * @returns {Promise<Object>} Admin details
-   */
-  getAdminDetails: async (adminId) => {
-    try {
-      const response = await axios.get(`${API_URL}/api/admindetails/${adminId}`);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || 'Error fetching admin details';
-    }
-  },
-
-  /**
-   * Fetch all admin details
-   * @returns {Promise<Array>} List of all admins
+   * Fetch details of all admins
+   * @returns {Promise<Object[]>} List of all admin details
    */
   getAllAdminDetails: async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/admindetails`);
+      const response = await axios.get(
+        "http://localhost:8085/api/admindetails"
+      );
+      console.log(response);
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Error fetching admin list';
+      throw error.response?.data || "Error fetching admin list";
     }
   },
 
@@ -36,12 +24,18 @@ const AdminService = {
    * @param {Object} adminDTO - The admin data to update
    * @returns {Promise<Object>} Updated admin details
    */
-  updateAdminDetails: async (adminDTO) => {
+  updateAdminDetails: async (adminData: {
+    adminId: number;
+    password: string;
+  }) => {
     try {
-      const response = await axios.put(`${API_URL}/api/admindetails`, adminDTO);
+      const response = await axios.put(
+        `${API_URL}/api/admindetails/adminedit`,
+        adminData
+      );
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Error updating admin details';
+      throw error.response?.data || "Error updating admin details";
     }
   },
 
@@ -52,11 +46,14 @@ const AdminService = {
    */
   addShipDetails: async (shipDetail) => {
     try {
-      const response = await axios.post(`http://localhost:8085/api/admindetails/Shipadd`, shipDetail);
+      const response = await axios.post(
+        `http://localhost:8085/api/admindetails/Shipadd`,
+        shipDetail
+      );
       console.log(response);
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Error adding ship details';
+      throw error.response?.data || "Error adding ship details";
     }
   },
 
@@ -67,10 +64,13 @@ const AdminService = {
    */
   editShipDetails: async (shipDetail) => {
     try {
-      const response = await axios.put(`${API_URL}/api/admindetails/Shipedit`, shipDetail);
+      const response = await axios.put(
+        `http://localhost:8085/api/admindetails/Shipedit`,
+        shipDetail
+      );
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Error editing ship details';
+      throw error.response?.data || "Error editing ship details";
     }
   },
 
@@ -81,10 +81,12 @@ const AdminService = {
    */
   deleteShipDetails: async (shipId) => {
     try {
-      const response = await axios.delete(`${API_URL}/api/admindetails/delete/${shipId}`);
+      const response = await axios.delete(
+        `${API_URL}/api/admindetails/delete/${shipId}`
+      );
       return response.data;
     } catch (error) {
-      throw error.response?.data || 'Error deleting ship';
+      throw error.response?.data || "Error deleting ship";
     }
   },
 };
