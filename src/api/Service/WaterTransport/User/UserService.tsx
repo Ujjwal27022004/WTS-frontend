@@ -22,4 +22,16 @@ export class UserService {
       throw new Error("Unable to update user");
     }
   }
+
+  public async getUserById(userId: number) {
+    try {
+      const response = await axios.get(`${API_URL}/usermanagement/search`, {
+        params: { userId },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching user with ID ${userId}:`, error);
+      throw new Error(`Unable to fetch user with ID ${userId}`);
+    }
+  }
 }

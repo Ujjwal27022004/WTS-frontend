@@ -65,7 +65,7 @@ export const ShipsPage: React.FC = () => {
 
   const handleAddShip = async (newShip: ShipDetails) => {
     try {
-      const response = await fetch("/admindetails/Shipadd", {
+      const response = await fetch("/api/admindetails/Shipadd", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

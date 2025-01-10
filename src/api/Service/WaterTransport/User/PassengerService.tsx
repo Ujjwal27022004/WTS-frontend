@@ -4,6 +4,7 @@ import { Passenger } from '../../../Model/WaterTransport/User/Passenger'; // Adj
 const API_BASE_URL = 'http://localhost:8085/passengerDetails';
 
 export class PassengerService {
+    
     async fetchPassengerDetails(passengerId: number): Promise<Passenger> {
         const response = await axios.get(`${API_BASE_URL}/${passengerId}`);
         return response.data;
