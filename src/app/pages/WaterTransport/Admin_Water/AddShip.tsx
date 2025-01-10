@@ -25,7 +25,7 @@ const AddShip: React.FC<AddShipProps> = ({ onClose, onAdd }) => {
     source: "",
     destination: "",
     cruiseLength: 0,
-    cruiseType: "STANDARD", // Default value; adjust as per your enum
+    cruiseType: "FAMILY", // Default value; adjust as per your enum
     date: "",
     rating: 0,
     availability: true,
@@ -137,9 +137,10 @@ const AddShip: React.FC<AddShipProps> = ({ onClose, onAdd }) => {
                   value={newShip.cruiseType}
                   onChange={handleInputChange}
                 >
-                  <option value="STANDARD">Standard</option>
-                  <option value="LUXURY">Luxury</option>
-                  <option value="ECONOMY">Economy</option>
+                  <option value="FAMILY">FAMILY</option>
+                  <option value="LUXURY">LUXURY</option>
+                  <option value="DELUXE">DELUXE</option>
+                  <option value="PREMIUM">PREMIUM</option>
                   {/* Add other enum options as per your backend */}
                 </select>
               </div>
