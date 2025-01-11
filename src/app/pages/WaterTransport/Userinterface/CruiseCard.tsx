@@ -112,8 +112,8 @@ const CruisePage: React.FC = () => {
   const ships = state?.ships || []; // Ensure ships data exists
   const navigate = useNavigate();
 
-  const handleBookNow = (ship: any) => {
-    navigate("/ship-details", { state: ship });
+  const handleBookNow = (shipId: number) => {
+    navigate(`/ship-details/${shipId}`);
   };
   
 
@@ -149,7 +149,7 @@ const CruisePage: React.FC = () => {
                     <p className="card-text">
                       <strong>Price: ₹{ship.price}</strong>
                     </p>
-                    <button className="btn btn-primary" onClick={() => handleBookNow(ship)}>Book Now</button>
+                    <button className="btn btn-primary" onClick={() => handleBookNow(ship.shipId)}>Book Now</button>
                   </div>
                 </div>
               </div>
