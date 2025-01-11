@@ -22,6 +22,7 @@ export const AuthService = {
         }
       }
 
+
       return response.data; // Return the API response data
     } catch (error: any) {
       console.error("Error during login:", error.response?.data || error.message);
@@ -33,7 +34,8 @@ export const AuthService = {
   Adminlogin: async (loginData: LoginBasicInfo): Promise<any> => {
     try {
       const response = await axios.post(`${API_URL}/api/v1/user/Adminlogin`, loginData);
-      console.log("Admin Data : " , response.data);
+
+      console.log("Admin Data:",response.data);
       return response.data; // Return the API response data
     } catch (error: any) {
       console.error("Error during admin login:", error.response?.data || error.message);
