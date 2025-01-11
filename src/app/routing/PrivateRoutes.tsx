@@ -124,7 +124,7 @@ const PrivateRoutes = () => {
         {/* user section water  page */}
 
         <Route path="water/search" element={<Search />} />
-        <Route path="/ship-details" element={<ShipDetailsPage />} />
+        <Route path="/ship-details/:shipId" element={<ShipDetailsPage />} />
         <Route path="/summary" element={<SummaryPage />} />
 
         {/* AirTransport user  */}
