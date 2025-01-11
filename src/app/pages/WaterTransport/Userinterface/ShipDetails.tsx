@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { createBooking } from "../../../../api/Service/WaterTransport/User/BookingService";
 import { Booking } from "../../../../api/Model/WaterTransport/User/booking";
+import BusBooking from "../../GroundTransport/UserUI_G/Homepage";
 
 const ShipDetailsPage: React.FC = () => {
   const { shipId } = useParams<{ shipId: string }>();
@@ -49,13 +50,13 @@ const ShipDetailsPage: React.FC = () => {
   }, [shipId]);
 
   const handleSaveBooking = async () => {
-    if (!shipDetails || !travelDate || !parsedUserId) {
+    if (!shipDetails || !parsedUserId) {
       alert("Please select a valid date and ensure you are logged in.");
       return;
     }
 
-    console.log(parsedUserId);
-    console.log(shipDetails.shipId);
+    // console.log(parsedUserId);
+    // console.log(shipDetails.shipId);
 
     const bookingData: Booking = {
       seatsBooked: numTravelers,
@@ -65,8 +66,11 @@ const ShipDetailsPage: React.FC = () => {
     };
 
     try {
-      await createBooking(bookingData);
-      navigate("/summary", { state: { bookingData, shipDetails } });
+      const createdbooking  = await createBooking(bookingData);
+      console.log(createdbooking)
+    
+
+      navigate("/summary", { state: { bookingData, shipDetails,createdbooking } });
     } catch (error) {
       alert("Failed to create booking. Please try again.");
     }
