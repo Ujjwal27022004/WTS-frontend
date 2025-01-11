@@ -69,6 +69,7 @@ const PrivateRoutes = () => {
         {/* <Route path="dashboard" element={<DashboardWrapper />} /> */}
 
         <Route path="dashboard" element={<ShipDetailsPage />} />
+        <Route path="dashboard" element={<HomeMain />} />
         {/* <Route
           path="builder"
           element={
