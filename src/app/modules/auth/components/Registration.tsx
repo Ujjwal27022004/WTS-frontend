@@ -130,7 +130,7 @@ const Signup = () => {
                             width: "100%",
                         }}
                     />
-                </div>
+             s   </div>
 
                 <div className="form-group">
                     <label

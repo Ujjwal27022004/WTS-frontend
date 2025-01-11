@@ -63,7 +63,7 @@ const AppRoutes: FC = () => {
               <Route path="home" element={<HomeMain />} /> {/* HomeMain Route */}
               <Route path="search" element={<Search />} /> {/* Search Route */}
               <Route path="/receipt" element={<ReceiptPage />} />
-              <Route index element={<Navigate to="/dashboard" />} />
+              <Route index element={<Navigate to="/home" />} />
             </>
           ) : (
             <>
