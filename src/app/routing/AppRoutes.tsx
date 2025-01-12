@@ -64,11 +64,12 @@ const AppRoutes: FC = () => {
               <Route path="search" element={<Search />} /> {/* Search Route */}
               <Route path="/receipt" element={<ReceiptPage />} />
               <Route index element={<Navigate to="/home" />} />
+                <Route path="auth/*" element={<AuthPage />} />
+                <Route path="*" element={<Navigate to="/auth" />} />
             </>
           ) : (
             <>
-              <Route path="auth/*" element={<AuthPage />} />
-              <Route path="*" element={<Navigate to="/auth" />} />
+
             </>
 
             
