@@ -3,7 +3,7 @@ import { PageTitle } from "../../../_metronic/layout/core";
 import { Navigate, Route, Routes } from "react-router-dom";
 import SidebarPage from "../WaterTransport/Admin_Water/AdminDashboard";
 import ShipDetailsPage from "../WaterTransport/Userinterface/ShipDetails";
-
+import HomeMain from "../WaterTransport/Userinterface/HomeMain";
 import {
   ListsWidget1,
   ListsWidget2,
@@ -147,6 +147,7 @@ const DashboardWrapper = () => {
       {/* <DashboardPage /> */}
       {/* <SidebarPage /> */}
       {/* <ShipDetailsPage /> */}
+
     </>
   );
 };

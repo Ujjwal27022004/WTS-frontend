@@ -36,7 +36,7 @@ import AirHomePage from "../pages/AirTransport/UserUI_A/homepageair";
 import Search from "../pages/WaterTransport/Userinterface/Search";
 
 import ShipDetailsPage from "../pages/WaterTransport/Userinterface/ShipDetails";
-
+import UserdashBoardWater from "../pages/WaterTransport/Userinterface/UserDashboardWater";
 import SummaryPage from "../pages/WaterTransport/Userinterface/Summary";
 import SearchAir from "../pages/AirTransport/UserUI_A/SearchAir";
 import AirDetailsPage from "../pages/AirTransport/UserUI_A/AirDetails";
@@ -60,8 +60,8 @@ const PrivateRoutes = () => {
       <Route element={<MasterLayout />}>
         {/* Redirect to Dashboard after success login/registartion */}
         <Route
-          path="auth/*"
-          element={<Navigate to="/Water/Admindashboard" />}
+            path="auth/*"
+            element={<Navigate to="/home" />}
         />
         {/* <Route path="auth/*" element={<Navigate to="Water/Admindashboard" />} /> */}
 
@@ -101,8 +101,8 @@ const PrivateRoutes = () => {
         {/* Ground Admin Routes */}
         <Route path="Ground/homepage" element={<BusBooking />}></Route>
         <Route
-          path="Ground/AdminDashboard"
-          element={<AdminDashboard_G />}
+            path="Ground/AdminDashboard"
+            element={<AdminDashboard_G />}
         ></Route>
         <Route path="Ground/Bus" element={<BusesPage />}></Route>
         <Route path="Ground/BusEmployee" element={<BusEmployeePage />}></Route>
@@ -111,7 +111,7 @@ const PrivateRoutes = () => {
         <Route path="Ground/busbooking" element={<BusBookingPage />}></Route>
         <Route path="Ground/FAQ" element={<FAQGroudPage />}></Route>
 
-        {/* 
+        {/*
         Air Admin Routes */}
         <Route path="Air/Aircrafts" element={<PlansPage />}></Route>
         <Route path="Air/Revenue" element={<AircraftRevenuePage />}></Route>
@@ -119,23 +119,28 @@ const PrivateRoutes = () => {
         <Route path="Air/Employee" element={<AirEmployeePage />}></Route>
         <Route path="Air/Users" element={<AirUserPage />}></Route>
         <Route path="Air/Homepage" element={<AirHomePage />} />
-
+        {/*<Route path="Air/Admindashboard" element={<AirAdmindashboard/>}></Route>*/}
         {/* user section water  page */}
 
         <Route path="water/search" element={<Search />} />
-        <Route path="/ship-details/:shipId" element={<ShipDetailsPage />} />
+
+        <Route path="/ship-details" element={<ShipDetailsPage />} />
+
         <Route path="/summary" element={<SummaryPage />} />
+        <Route path="/waterUserDashboard" element={<UserdashBoardWater />} />
 
         {/* AirTransport user  */}
 
         <Route path="/Air/Search" element={<SearchAir />} />
         <Route path="/AirDetails" element={<AirDetailsPage />} />
         <Route path="/summaryAir" element={<SummaryAir />} />
+        {/*<Route path="/AirUserDashBoard" element={<UserDashBoardAir />} />*/}
 
         {/* GroundTransport user */}
         <Route path="/Ground/Search" element={<BusSearch />} />
         <Route path="/BusDetails" element={<BusDetails />} />
         <Route path="/SummaryGround" element={<SummaryGround />} />
+        {/*<Route path="/UserDashBoardGround" element={<UserDashboard />} />*/}
 
         {/* <Route path=" Air/Booking" element={<AirBookingPage/>}></Route> */}
 
