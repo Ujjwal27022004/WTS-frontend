@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { Passenger } from "../../../../api/Model/WaterTransport/User/Passenger";
 
 const ReceiptPage: React.FC = () => {
   const location = useLocation();
@@ -9,10 +10,20 @@ const ReceiptPage: React.FC = () => {
 
   const receiptDetails = location.state as {
     cruise: {
+      availability: boolean;
+      capacity: number;
+      cruiseLength: number;
+      cruiseType: number;
+      date: string;
+      destination: string;
       name: string;
-      image: string;
       price: number;
-      shipId: string;
+      rating: number;
+      shipId: number;
+      source: string;
+      id: string;
+      description: string;
+      image: string;
     };
     travelDate: string;
     numTravelers: number;
@@ -23,7 +34,7 @@ const ReceiptPage: React.FC = () => {
     };
     paymentMethod: string;
     totalAmount: number;
-    receiptId: string;
+    passengers: Passenger[];
   };
 
   if (!receiptDetails) {
@@ -43,7 +54,7 @@ const ReceiptPage: React.FC = () => {
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`receipt-${receiptDetails.receiptId}.pdf`);
+    pdf.save(`receipt-${receiptDetails.cruise.id}.pdf`);
   };
 
   return (
@@ -69,7 +80,7 @@ const ReceiptPage: React.FC = () => {
         Payment Receipt
       </h3>
       <div
-        id="receipt" // Add ID for capturing the receipt
+        id="receipt"
         className="card"
         style={{
           border: "none",
@@ -100,21 +111,49 @@ const ReceiptPage: React.FC = () => {
             }}
           >
             <p>
-              <strong>Ship Name:</strong> {receiptDetails.cruise.name}
-            </p>
-            <p>
               <strong>Ship ID:</strong> {receiptDetails.cruise.shipId}
             </p>
             <p>
-              <strong>Travel Date:</strong> {receiptDetails.travelDate}
+              <strong>Ship Name:</strong> {receiptDetails.cruise.name}
+            </p>
+            <p>
+              <strong>Source:</strong> {receiptDetails.cruise.source}
+            </p>
+            <p>
+              <strong>Destination:</strong> {receiptDetails.cruise.destination}
+            </p>
+            <p>
+              <strong>Travel Date:</strong> {receiptDetails.cruise.date}
             </p>
             <p>
               <strong>Number of Travelers:</strong>{" "}
               {receiptDetails.numTravelers}
             </p>
+            <h5
+            style={{
+              fontSize: "18px",
+              fontWeight: "bold",
+              color: "#555",
+              marginBottom: "15px",
+              borderBottom: "1px solid #ddd",
+              paddingBottom: "5px",
+            }}
+          >Passenger Details:</h5>
+            {receiptDetails.passengers.length > 0 ? (
+              <ul>
+                {receiptDetails.passengers.map((passenger, index) => (
+                  <li key={index}>Passenger {index+1}<br></br>
+                    <strong>Name</strong> : {passenger.name} <br></br> <strong>Age</strong> : {passenger.age} years old{" "}<br></br>
+                    <strong>Gender</strong> : {passenger.gender}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No passengers found.</p>
+            )}
           </div>
 
-          <h5
+          {/* <h5
             style={{
               fontSize: "18px",
               fontWeight: "bold",
@@ -143,7 +182,7 @@ const ReceiptPage: React.FC = () => {
             <p>
               <strong>Phone:</strong> {receiptDetails.userInfo.phone}
             </p>
-          </div>
+          </div> */}
 
           <h5
             style={{
@@ -171,9 +210,6 @@ const ReceiptPage: React.FC = () => {
             <p>
               <strong>Total Amount Paid:</strong> ₹{receiptDetails.totalAmount}
             </p>
-            <p>
-              <strong>Receipt ID:</strong> {receiptDetails.receiptId}
-            </p>
           </div>
 
           <h5
@@ -199,13 +235,7 @@ const ReceiptPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Download Button */}
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "20px",
-        }}
-      >
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <button
           className="btn btn-primary"
           onClick={handleDownloadReceipt}

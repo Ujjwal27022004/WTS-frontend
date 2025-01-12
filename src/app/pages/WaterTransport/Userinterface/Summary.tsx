@@ -288,6 +288,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FaPhone, FaCreditCard, FaWallet } from "react-icons/fa";
 import { PaymentService } from "../../../../api/Service/WaterTransport/User/PaymentService";
 import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
+import { generateReceipt } from "../../../../api/Service/WaterTransport/User/ReceiptService";
 
 interface LocationState {
   bookingData: {
@@ -308,7 +309,7 @@ interface LocationState {
     rating: number;
     shipId: number;
     source: string;
-    id: string;
+    id: string; 
     description: string;
     image: string;
   };
@@ -409,6 +410,20 @@ const SummaryPage: React.FC = () => {
       // Call the confirm payment API
       const response = await paymentService.confirmPayment(Number(paymentID));
       alert(response); // Show success message
+
+      const receiptData = {
+        amount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
+        date: new Date().toISOString(), // Current date in ISO format
+        shipId: bookingDetails.shipId,
+        userId: bookingDetails.userid,
+        paymentId: Number(paymentID),
+      };
+
+      const receiptResponse = await generateReceipt(receiptData.userId);
+      console.log(receiptResponse)
+      console.log(passengers)
+
+    alert("Receipt generated successfully!");
       navigate("/receipt", {
         state: {
           cruise: bookingDetails.cruise,
@@ -416,6 +431,8 @@ const SummaryPage: React.FC = () => {
           userInfo: bookingDetails.userid,
           paymentMethod: selectedPaymentMethod,
           totalAmount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
+          passengers:passengers,
+          receipt:receiptData
         },
       });
     } catch (error) {
