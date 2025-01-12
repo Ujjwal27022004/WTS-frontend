@@ -126,10 +126,10 @@ const CruisePage: React.FC = () => {
               <div className="row g-0">
                 <div className="col-md-6">
                   <img
-                    src={ship.image} // Assuming ship object has image property
+                    src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Assuming ship object has image property
                     alt={ship.name}
                     className="img-fluid rounded-start"
-                    style={{ height: "200px", objectFit: "cover" }}
+                    style={{ height: "500px",width:"500px", objectFit: "cover" }}
                   />
                 </div>
                 <div className="col-md-6">

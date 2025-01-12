@@ -289,6 +289,7 @@ import { FaPhone, FaCreditCard, FaWallet } from "react-icons/fa";
 import { PaymentService } from "../../../../api/Service/WaterTransport/User/PaymentService";
 import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
 import { generateReceipt } from "../../../../api/Service/WaterTransport/User/ReceiptService";
+import { Colors } from "chart.js";
 
 interface LocationState {
   bookingData: {
@@ -449,40 +450,40 @@ const SummaryPage: React.FC = () => {
         <div className="card-body" style={{ display: "flex", flexWrap: "wrap" }}>
         <div style={{ flex: "1 1 300px", marginRight: "20px" }}>
              <img
-              src={bookingDetails.cruise.image}
+              src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt={bookingDetails.cruise.name}
               className="img-fluid"
-              style={{ height: "300px", objectFit: "cover" }}
+              style={{ height: "400px", width:"400px", objectFit: "cover" }}
             />
           </div>
-          <div style={{ flex: "2 1 400px" }}>
-            <h5>{bookingDetails.cruise.name}</h5>
-            <p>CruiseType : {bookingDetails.cruise.cruiseType}</p>
-            <p>Source : {bookingDetails.cruise.source}</p>
-            <p>Destination : {bookingDetails.cruise.destination}</p>
-            <p>
+          <div style={{ flex: "2  400px",margin:"10px" }}>
+            <h1>{bookingDetails.cruise.name}</h1>
+            <h4>CruiseType : {bookingDetails.cruise.cruiseType}</h4>
+            <h4>Source : {bookingDetails.cruise.source}</h4>
+            <h4>Destination : {bookingDetails.cruise.destination}</h4>
+            <h5>
               <strong>Price:</strong> ₹{bookingDetails.cruise.price}
-            </p>
+            </h5>
             <p>
               {/* <strong>Check-in Date:</strong> {bookingDetails.travelDate} */}
             </p>
-            <p>
+            <h5>
               <strong>Number of Travelers:</strong>{" "}
               {bookingDetails.numTravelers}
-            </p>
+            </h5>
           </div>
         </div>
 
         <div style={{ marginTop: "20px", padding: "10px" }}>
-          <h5>Payment Details</h5>
-          <p>
+          <h1>Payment Details</h1>
+          <h2> 
             <strong>Total Price:</strong> ₹
             {bookingDetails.cruise.price * (bookingDetails.numTravelers || 1)}
-          </p>
+          </h2>
 
+          <div className="mt-10">
           <div className="mt-4">
-          <div className="mt-4">
-            <h5>Passenger Details</h5>
+            <h1>Passenger Details</h1>
             <button
               className="btn btn-primary"
               onClick={() => setShowPassengerForm(true)}
@@ -540,8 +541,8 @@ const SummaryPage: React.FC = () => {
           </div>
           </div>
 
-          <div className="mt-3">
-            <h6>Select Payment Method:</h6>
+          <div className="mt-10">
+            <h1>Select Payment Method:</h1>
             <div className="form-check">
               <input
                 className="form-check-input"

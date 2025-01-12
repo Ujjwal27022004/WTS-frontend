@@ -146,7 +146,7 @@ const DashboardWrapper = () => {
       </PageTitle> */}
       {/* <DashboardPage /> */}
       {/* <SidebarPage /> */}
-      <ShipDetailsPage />
+      {/* <ShipDetailsPage /> */}
     </>
   );
 };
