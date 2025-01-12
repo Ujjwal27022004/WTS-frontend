@@ -145,8 +145,9 @@ const DashboardWrapper = () => {
         {intl.formatMessage({ id: "MENU.DASHBOARD" })}
       </PageTitle> */}
       {/* <DashboardPage /> */}
-       <ShipDetailsPage/>
-      <HomeMain/>
+      {/* <SidebarPage /> */}
+      {/* <ShipDetailsPage /> */}
+
     </>
   );
 };
