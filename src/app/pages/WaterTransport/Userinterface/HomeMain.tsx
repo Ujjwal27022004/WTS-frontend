@@ -13,11 +13,17 @@ const HomeMain = () => {
   const [error, setError] = useState("");
 
   const [user, setUser] = useState({ username: "", email: "" });
+  const [Password, setPassword] = useState("");
+  const [ConfirmPassword, setConfirmPassword] = useState("");
   const [query, setQuery] = useState("");
   const [showQueryPopup, setShowQueryPopup] = useState(false);
   const [showEditProfilePopup, setShowEditProfilePopup] = useState(false);
-
+  const [showEditPasswordPopup,  setShowEditPasswordPopup] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  const [showGetQueryPopup, setShowGetQueryPopup] = useState(false);
+  const [userQueries, setUserQueries] = useState([]);
+
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -30,6 +36,27 @@ const HomeMain = () => {
       alert("User ID is not available in local storage.");
     }
   }, []);
+  const userId = localStorage.getItem("userId");
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const fetchUserQueries = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/v1/user/getQueries`, {
+          params: { userid: userId },
+        });
+        setUserQueries(response.data);
+        console.log("okay");
+        // Save fetched data to state
+        setError(null); // Clear any previous error
+      } catch (err) {
+        setError(err.response?.data || "Error fetching queries");
+      }
+    };
+
+    if (userId) {
+      fetchUserQueries(); // Fetch queries if userId is provided
+    }
+  }, [showQueryPopup,showGetQueryPopup,userId]);
 
   const handleQuerySubmit = () => {
     if (!query) return;
@@ -62,6 +89,28 @@ const HomeMain = () => {
             setShowEditProfilePopup(false);
           })
           .catch(() => alert("Failed to update profile. Please try again later."));
+    } else {
+      alert("User ID is not available in local storage.");
+    }
+  };
+
+  const handlePasswordUpdate = () => {
+    const userId = localStorage.getItem("userId");
+    const passwordDTO = { password: Password };
+    if (userId) {
+      if(Password != ConfirmPassword){
+        alert("Check Password.");
+      }else{
+        axios
+            .put(`${API_URL}/api/v1/user/profile?userid=${userId}`, passwordDTO)
+            .then(() => {
+              alert("Password updated successfully.");
+              setPassword("");
+              setConfirmPassword("");
+              setShowEditPasswordPopup(false);
+            })
+            .catch(() => alert("Failed to update password. Please try again later."));
+      }
     } else {
       alert("User ID is not available in local storage.");
     }
@@ -136,6 +185,21 @@ const HomeMain = () => {
             Edit Profile
           </button>
 
+          <button
+              className="btn btn-outline-light w-100 mb-3 shadow-sm"
+              onClick={() => setShowEditPasswordPopup(true)}
+          >
+            Reset Password
+          </button>
+
+          <button
+              className="btn btn-outline-light w-100 mb-3 shadow-sm"
+              onClick={() => setShowGetQueryPopup(true)}
+          >
+            My Queries
+          </button>
+
+
           {/* Query Popup */}
           {showQueryPopup && (
               <div
@@ -155,7 +219,7 @@ const HomeMain = () => {
               >
                 <div
                     className="popup bg-white p-4 shadow rounded"
-                    style={{ width: "400px", borderRadius: "15px" }}
+                    style={{width: "400px", borderRadius: "15px"}}
                 >
                   <h5 className="text-center text-primary">Ask Query</h5>
                   <textarea
@@ -204,14 +268,14 @@ const HomeMain = () => {
               >
                 <div
                     className="popup bg-white p-4 shadow rounded"
-                    style={{ width: "400px", borderRadius: "15px" }}
+                    style={{width: "400px", borderRadius: "15px"}}
                 >
                   <h5 className="text-center text-primary">Edit Profile</h5>
                   <input
                       type="text"
                       className="form-control mb-3"
                       value={user.username}
-                      onChange={(e) => setUser({ ...user, username: e.target.value })}
+                      onChange={(e) => setUser({...user, username: e.target.value})}
                       placeholder="Username"
                       style={{
                         borderRadius: "8px",
@@ -223,7 +287,7 @@ const HomeMain = () => {
                       type="email"
                       className="form-control mb-3"
                       value={user.email}
-                      onChange={(e) => setUser({ ...user, email: e.target.value })}
+                      onChange={(e) => setUser({...user, email: e.target.value})}
                       placeholder="Email"
                       style={{
                         borderRadius: "8px",
@@ -245,6 +309,158 @@ const HomeMain = () => {
                 </div>
               </div>
           )}
+
+          {showEditPasswordPopup && (
+              <div
+                  className="popup-overlay"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "rgba(0, 0, 0, 0.5)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 1000,
+                  }}
+              >
+                <div
+                    className="popup bg-white p-4 shadow rounded"
+                    style={{width: "400px", borderRadius: "15px"}}
+                >
+                  <h5 className="text-center text-primary">Reset Password</h5>
+                  <input
+                      type="text"
+                      className="form-control mb-3"
+                      value={Password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      style={{
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                        transition: "all 0.3s ease",
+                      }}
+                  />
+                  <input
+                      type="email"
+                      className="form-control mb-3"
+                      value={ConfirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm Password"
+                      style={{
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                        transition: "all 0.3s ease",
+                      }}
+                  />
+                  <div className="text-center">
+                    <button className="btn btn-primary" onClick={handlePasswordUpdate}>
+                      Save
+                    </button>
+                    <button
+                        className="btn btn-secondary ms-2"
+                        onClick={() => setShowEditPasswordPopup(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+          )}
+
+
+          {showGetQueryPopup && (
+              <div
+                  className="popup-overlay"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "rgba(0, 0, 0, 0.5)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 1000,
+                  }}
+              >
+                <div
+                    className="popup bg-white p-4 shadow rounded"
+                    style={{
+                      width: "700px",
+                      borderRadius: "15px",
+                      maxHeight: "90vh",
+                      overflowY: "auto",
+                    }}
+                >
+                  <h4 className="text-center text-primary mb-4">User Queries</h4>
+                  {userQueries.length > 0 ? (
+                      <div>
+                        <table className="table table-bordered">
+                          <thead className="thead-light">
+                          <tr>
+                            <th>#</th>
+                            <th>Query Details</th>
+                            <th>Resolution</th>
+                            <th>Status</th>
+                            <th>Created Date</th>
+                            <th>Resolved Date</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {userQueries.map((query, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{query.queryDetails}</td>
+                                <td>
+                                  {query.queryResolution
+                                      ? query.queryResolution
+                                      : "Resolution not available"}
+                                </td>
+                                <td>
+                    <span
+                        className={`badge ${
+                            query.status === "Resolved"
+                                ? "bg-success"
+                                : query.status === "Pending"
+                                    ? "bg-warning text-dark"
+                                    : "bg-secondary"
+                        }`}
+                    >
+                      {query.status}
+                    </span>
+                                </td>
+                                <td>{new Date(query.createdDate).toLocaleString()}</td>
+                                <td>
+                                  {query.resolvedDate
+                                      ? new Date(query.resolvedDate).toLocaleString()
+                                      : "Not Resolved"}
+                                </td>
+                              </tr>
+                          ))}
+                          </tbody>
+                        </table>
+                      </div>
+                  ) : (
+                      <p className="text-center text-muted">No queries found for this user.</p>
+                  )}
+                  <div className="text-center mt-3">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => setShowGetQueryPopup(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+          )}
+
+
+
         </div>
 
         {/* Main Content */}
@@ -259,8 +475,8 @@ const HomeMain = () => {
             </div>
             <div>
               <button
-                  className={`btn ${darkMode ? "btn-light" : "btn-secondary"} me-2`}
-                  onClick={() => setDarkMode(!darkMode)}
+                  className={`btn ${darkMode ? "btn-light" : "btn-secondary"} me-2}
+                  onClick={() => setDarkMode(!darkMode)`}
               >
                 Dark Mode
               </button>

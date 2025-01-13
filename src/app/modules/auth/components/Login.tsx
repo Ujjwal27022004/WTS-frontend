@@ -213,7 +213,7 @@ const Login : React.FC = () => {
                             fontWeight: "bold",
                         }}
                     >
-                        Login
+                        Login                                                                                               
                     </button>
                 </div>
 
@@ -221,7 +221,7 @@ const Login : React.FC = () => {
                     <p style={{fontSize: "14px"}}>
                         Don't have an account?{" "}
                         <a
-                            href="auth/registration"
+                            href="registration"
                             style={{
                                 color: "#007bff",
                                 textDecoration: "none",
