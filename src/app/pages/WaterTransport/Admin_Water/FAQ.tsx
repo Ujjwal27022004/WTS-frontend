@@ -1,21 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Pagination from "../../Pagination";
+import {
+  fetchAllQueries,
+  resolveQuery,
+} from "../../../../api/Service/WaterTransport/Admin/QueryResolutionService";
+import EditFAQ from "./EditFAQ"; // Import the EditFAQ component
 
-// Example static data for FAQs
-const mockFAQs = [
-  { id: 1, category: "General", question: "What is your return policy?", answer: "You can return items within 30 days.", active: true },
-  { id: 2, category: "Shipping", question: "How long does shipping take?", answer: "Shipping takes 3-5 business days.", active: true },
-  { id: 3, category: "Accounts", question: "How do I reset my password?", answer: "Click on 'Forgot Password' at login.", active: false },
-];
+interface FAQ {
+  queryid: number;
+  user: { username: string };
+  queryDetails: string | null;
+  status: string;
+  createdDate: string;
+  resolvedDate: string | null;
+  queryResolution: string | null;
+}
 
 export const FAQPage: React.FC = () => {
-  const [faqs, setFaqs] = useState(mockFAQs);
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [search, setSearch] = useState("");
+  const [showEditQueryModal, setShowEditQueryModal] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState<FAQ | null>(null);
+
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        const data = await fetchAllQueries();
+        setFaqs(data);
+      } catch (error) {
+        alert("Failed to fetch queries. Please try again later.");
+      }
+    };
+    fetchFAQs();
+  }, []);
 
   const filteredFAQs = faqs.filter((faq) =>
-    faq.question.toLowerCase().includes(search.toLowerCase())
+    faq.queryDetails?.toLowerCase().includes(search.toLowerCase())
   );
 
   const handlePageChange = (page: number) => setCurrentPage(page);
@@ -31,22 +53,53 @@ export const FAQPage: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(e.target.value);
 
-  const toggleActiveStatus = (id: number) => {
-    setFaqs(
-      faqs.map((faq) =>
-        faq.id === id ? { ...faq, active: !faq.active } : faq
+  const handleEditQuery = (query: FAQ) => {
+    setSelectedQuery(query);
+    setShowEditQueryModal(true);
+  };
+
+  const handleUpdateQuery = async () => {
+    if (!selectedQuery) return;
+
+    try {
+      const updatedQuery = {
+        ...selectedQuery,
+        resolutionDate: new Date().toLocaleDateString(), // Automatically set the resolution date to today
+      };
+
+      const result = await resolveQuery(
+        updatedQuery.queryid,
+        updatedQuery.queryResolution || "",
+        updatedQuery.status
+      );
+
+      setFaqs((prevFaqs) =>
+        prevFaqs.map((faq) =>
+          faq.queryid === result.queryid ? result : faq
+        )
+      );
+      setShowEditQueryModal(false);
+      setSelectedQuery(null);
+    } catch (error) {
+      alert("Failed to update the query. Please try again.");
+    }
+  };
+
+  const handleEditFAQ = (updatedFAQ: FAQ) => {
+    setFaqs((prevFaqs) =>
+      prevFaqs.map((faq) =>
+        faq.queryid === updatedFAQ.queryid ? updatedFAQ : faq
       )
     );
   };
 
   return (
     <div className="card">
-      {/* Header */}
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">FAQs</span>
+          <span className="card-label fw-bold fs-3 mb-1">Queries</span>
           <span className="text-muted mt-1 fw-semibold fs-7">
-            Total FAQs: {filteredFAQs.length}
+            Total Queries: {filteredFAQs.length}
           </span>
         </h3>
         <div className="card-toolbar d-flex flex-end">
@@ -54,78 +107,48 @@ export const FAQPage: React.FC = () => {
             type="text"
             className="form-control border-1 border-primary border-opacity-25 mx-2 text-gray-800"
             style={{ width: "12rem" }}
-            placeholder="Search FAQs"
+            placeholder="Search Queries"
             value={search}
             onChange={handleSearchChange}
           />
-
-          <button
-            type="button"
-            className="btn btn-light-primary border-0 rounded mx-2"
-          >
-            <i className="fs-2 bi bi-plus" /> Add New FAQ
-          </button>
         </div>
       </div>
 
-      {/* Body */}
       <div className="card-body py-3">
         <div className="table-responsive">
           <table className="table table-hover table-rounded table-striped border gy-7 gs-7">
             <thead>
               <tr className="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
-                <th>Category</th>
-                <th>Question</th>
-                <th>Answer</th>
+                <th>User</th>
+                <th>Query Details</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Resolution Date</th>
+                <th>Resolution</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredFAQs
-                .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                .slice(
+                  (currentPage - 1) * entriesPerPage,
+                  currentPage * entriesPerPage
+                )
                 .map((faq) => (
-                  <tr key={faq.id}>
-                    <td>{faq.category}</td>
-                    <td>{faq.question}</td>
-                    <td>{faq.answer}</td>
+                  <tr key={faq.queryid}>
+                    <td>{faq.user.username}</td>
+                    <td>{faq.queryDetails || "No details provided"}</td>
+                    <td>{faq.status}</td>
+                    <td>{new Date(faq.createdDate).toLocaleDateString()}</td>
+                    <td>{faq.resolvedDate || "Not resolved"}</td>                    
+                    <td>{faq.queryResolution || "No resolution provided"}</td>
                     <td className="text-center">
-                      <div className="d-flex flex-row align-items-center">
-                        <button
-                          className="btn btn-icon btn-bg-light btn-sm me-1"
-                          // View button functionality
-                        >
-                          <i className="ki-duotone ki-eye fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                          </i>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Edit button functionality
-                        >
-                          <i className="ki-duotone ki-pencil fs-3 text-primary">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                          </i>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                          // Delete button functionality
-                        >
-                          <i className="ki-duotone ki-trash fs-3 text-danger">
-                            <span className="path1"></span>
-                            <span className="path2"></span>
-                            <span className="path3"></span>
-                            <span className="path4"></span>
-                            <span className="path5"></span>
-                          </i>
-                        </button>
-                      </div>
+                      <button
+                        className="btn btn-primary btn-sm me-2"
+                        onClick={() => handleEditQuery(faq)}
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -134,7 +157,6 @@ export const FAQPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="card-footer">
         <Pagination
           currentPage={currentPage}
@@ -144,6 +166,14 @@ export const FAQPage: React.FC = () => {
           onEntriesPerPageChange={handleEntriesPerPageChange}
         />
       </div>
+
+      {showEditQueryModal && selectedQuery && (
+        <EditFAQ
+          faq={selectedQuery}
+          onClose={() => setShowEditQueryModal(false)}
+          onEdit={handleEditFAQ}
+        />
+      )}
     </div>
   );
 };
