@@ -4,6 +4,7 @@ import {
   fetchAllQueries,
   resolveQuery,
 } from "../../../../api/Service/WaterTransport/Admin/QueryResolutionService";
+import EditFAQ from "./EditFAQ"; // Import the EditFAQ component
 
 interface FAQ {
   queryid: number;
@@ -84,6 +85,14 @@ export const FAQPage: React.FC = () => {
     }
   };
 
+  const handleEditFAQ = (updatedFAQ: FAQ) => {
+    setFaqs((prevFaqs) =>
+      prevFaqs.map((faq) =>
+        faq.queryid === updatedFAQ.queryid ? updatedFAQ : faq
+      )
+    );
+  };
+
   return (
     <div className="card">
       <div className="card-header border-0 pt-5">
@@ -159,80 +168,11 @@ export const FAQPage: React.FC = () => {
       </div>
 
       {showEditQueryModal && selectedQuery && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Edit Query</h2>
-            <div>
-              <label>User:</label>
-              <p>{selectedQuery.user.username}</p>
-            </div>
-            <div>
-              <label>Query Details:</label>
-              <textarea
-                value={selectedQuery.queryDetails || ""}
-                onChange={(e) =>
-                  setSelectedQuery({
-                    ...selectedQuery,
-                    queryDetails: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label>Resolution:</label>
-              <textarea
-                value={selectedQuery.resolution || ""}
-                onChange={(e) =>
-                  setSelectedQuery({
-                    ...selectedQuery,
-                    resolution: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label>Status:</label>
-              <select
-                value={selectedQuery.status}
-                onChange={(e) =>
-                  setSelectedQuery({
-                    ...selectedQuery,
-                    status: e.target.value,
-                  })
-                }
-              >
-                <option value="Open">Open</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Closed">Closed</option>
-              </select>
-            </div>
-            <div>
-              <label>Resolution Date:</label>
-              <input
-                type="date"
-                value={selectedQuery.resolutionDate || ""}
-                onChange={(e) =>
-                  setSelectedQuery({
-                    ...selectedQuery,
-                    resolutionDate: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <button
-              onClick={handleUpdateQuery}
-              className="btn btn-success"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setShowEditQueryModal(false)}
-              className="btn btn-secondary"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <EditFAQ
+          faq={selectedQuery}
+          onClose={() => setShowEditQueryModal(false)}
+          onEdit={handleEditFAQ}
+        />
       )}
     </div>
   );
