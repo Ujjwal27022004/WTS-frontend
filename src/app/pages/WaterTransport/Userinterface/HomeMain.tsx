@@ -16,14 +16,16 @@ const HomeMain = () => {
   const [Password, setPassword] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
   const [query, setQuery] = useState("");
+
   const [showQueryPopup, setShowQueryPopup] = useState(false);
   const [showEditProfilePopup, setShowEditProfilePopup] = useState(false);
   const [showEditPasswordPopup,  setShowEditPasswordPopup] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
+  const [ShowGetBookingsPopup, setShowGetBookingsPopup] = useState(false);
   const [showGetQueryPopup, setShowGetQueryPopup] = useState(false);
   const [userQueries, setUserQueries] = useState([]);
-
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -57,6 +59,27 @@ const HomeMain = () => {
       fetchUserQueries(); // Fetch queries if userId is provided
     }
   }, [showQueryPopup,showGetQueryPopup,userId]);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const fetchUserBookings = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/bookings/getBookings`, {
+          params: { userid: userId },
+        });
+        setBookings(response.data);
+        console.log("okay");
+        // Save fetched data to state
+        setError(null); // Clear any previous error
+      } catch (err) {
+        setError(err.response?.data || "Error fetching Bookings");
+      }
+    };
+
+    if (userId) {
+      fetchUserBookings(); // Fetch queries if userId is provided
+    }
+  }, [userId]);
 
   const handleQuerySubmit = () => {
     if (!query) return;
@@ -190,6 +213,13 @@ const HomeMain = () => {
               onClick={() => setShowEditPasswordPopup(true)}
           >
             Reset Password
+          </button>
+
+          <button
+              className="btn btn-outline-light w-100 mb-3 shadow-sm"
+              onClick={() => setShowGetBookingsPopup(true)}
+          >
+            My Bookings
           </button>
 
           <button
@@ -459,6 +489,89 @@ const HomeMain = () => {
               </div>
           )}
 
+          {ShowGetBookingsPopup && (
+              <div
+                  className="popup-overlay"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "rgba(0, 0, 0, 0.5)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 1000,
+                  }}
+              >
+                <div
+                    className="popup bg-white p-4 shadow rounded"
+                    style={{
+                      width: "700px",
+                      borderRadius: "15px",
+                      maxHeight: "90vh",
+                      overflowY: "auto",
+                    }}
+                >
+                  <h4 className="text-center text-primary mb-4">Booking Details</h4>
+                  {bookings.length > 0 ? (
+                      <div>
+                        <table className="table table-bordered">
+                          <thead className="thead-light">
+                          <tr>
+                            <th>#</th>
+                            {/*<th>Booking ID</th>*/}
+                            <th>Date</th>
+                            <th>Seats Booked</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            {/*<th>User</th>*/}
+                            <th>Ship</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {bookings.map((booking, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                {/*<td>{booking.bookingId}</td>*/}
+                                <td>{new Date(booking.localDate).toLocaleString()}</td>
+                                <td>{booking.seatsBooked}</td>
+                                <td>${booking.totalPrice}</td>
+                                <td>
+                    <span
+                        className={`badge ${
+                            booking.bookingStatus === "Confirmed"
+                                ? "bg-success"
+                                : booking.bookingStatus === "Pending"
+                                    ? "bg-warning text-dark"
+                                    : "bg-secondary"
+                        }`}
+                    >
+                      {booking.bookingStatus}
+                    </span>
+                                </td>
+                                {/*<td>{booking.user.name}</td>*/}
+                                <td>{booking.ship.name}</td>
+                              </tr>
+                          ))}
+                          </tbody>
+                        </table>
+                      </div>
+                  ) : (
+                      <p className="text-center text-muted">No bookings found.</p>
+                  )}
+                  <div className="text-center mt-3">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => setShowGetBookingsPopup(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+          )}
 
 
         </div>
@@ -475,8 +588,8 @@ const HomeMain = () => {
             </div>
             <div>
               <button
-                  className={`btn ${darkMode ? "btn-light" : "btn-secondary"} me-2}
-                  onClick={() => setDarkMode(!darkMode)`}
+                  className={`btn ${darkMode ? "btn-light" : "btn-secondary"} me-2`}
+                  onClick={() => setDarkMode(!darkMode)}
               >
                 Dark Mode
               </button>
