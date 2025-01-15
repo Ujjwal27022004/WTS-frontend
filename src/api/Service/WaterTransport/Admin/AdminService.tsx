@@ -10,7 +10,7 @@ const AdminService = {
   getAllAdminDetails: async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8085/api/admindetails"
+        `${API_URL}/api/admindetails`
       );
       console.log(response);
       return response.data;
@@ -47,7 +47,7 @@ const AdminService = {
   addShipDetails: async (shipDetail) => {
     try {
       const response = await axios.post(
-        `http://localhost:8085/api/admindetails/Shipadd`,
+        `${API_URL}/api/admindetails/Shipadd`,
         shipDetail
       );
       console.log(response);
