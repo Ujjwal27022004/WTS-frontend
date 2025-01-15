@@ -537,7 +537,7 @@ const HomeMain = () => {
                                 {/*<td>{booking.bookingId}</td>*/}
                                 <td>{new Date(booking.localDate).toLocaleString()}</td>
                                 <td>{booking.seatsBooked}</td>
-                                <td>${booking.totalPrice}</td>
+                                <td>₹{booking.totalPrice}</td>
                                 <td>
                     <span
                         className={`badge ${
