@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Passenger } from '../../../Model/WaterTransport/User/Passenger'; // Adjust the path as needed
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-const API_BASE_URL = 'http://localhost:8085/passengerDetails';
+const API_BASE_URL = `${API_URL}/passengerDetails`;
 
 export class PassengerService {
     

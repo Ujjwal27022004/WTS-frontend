@@ -1,7 +1,9 @@
 import axios from "axios";
 import { Booking } from "../../../Model/WaterTransport/User/booking";
 
-const BASE_URL = "http://localhost:8085/bookings";
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
+const BASE_URL = `${API_URL}/bookings`;
 
 export const createBooking = async (bookingData: Booking) => {
   try {
@@ -24,7 +26,7 @@ export const initiatePayment = async (bookingId: number, amount: number) => {
     };
 
     // Send the payment data as the body of the POST request (rather than query params)
-    const response = await axios.post("http://localhost:8085/payments/initiate", paymentData);
+    const response = await axios.post(`${API_URL}/payments/initiate`, paymentData);
     return response.data; // Return the response from the payment API
   } catch (error) {
     console.error("Error initiating payment:", error);

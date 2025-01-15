@@ -150,7 +150,7 @@ const HomeMain = () => {
     }
 
     try {
-      const response = await axios.get("http://localhost:8085/shipdetails/search", {
+      const response = await axios.get(`${API_URL}/shipdetails/search`, {
         params: { source, destination },
       });
       setShips(response.data);

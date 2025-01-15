@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8085";
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
+const API_BASE_URL = `${API_URL}`;
 
 export const getRemainingSeats = async (shipId: number): Promise<number> => {
   try {

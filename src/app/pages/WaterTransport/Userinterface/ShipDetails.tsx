@@ -146,6 +146,8 @@ import axios from "axios";
 import { createBooking } from "../../../../api/Service/WaterTransport/User/BookingService";
 import { getRemainingSeats } from "../../../../api/Service/WaterTransport/User/availabilityService"; // Import service
 import { Booking } from "../../../../api/Model/WaterTransport/User/booking";
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
 
 const ShipDetailsPage: React.FC = () => {
   const { shipId } = useParams<{ shipId: string }>();
@@ -177,7 +179,7 @@ const ShipDetailsPage: React.FC = () => {
   useEffect(() => {
     const fetchShipDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8085/shipdetails/${shipId}`);
+        const response = await axios.get(`${API_URL}/shipdetails/${shipId}`);
         setShipDetails(response.data);
       } catch (error) {
         console.error("Error fetching ship details:", error);

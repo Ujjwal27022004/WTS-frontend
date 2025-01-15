@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ReceiptDTO } from "../../../Model/WaterTransport/User/Receipt";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
-const BASE_URL = "http://localhost:8085/receipts"; // Replace with your backend URL
+const BASE_URL = `${API_URL}/receipts`; // Replace with your backend URL
 
 export const generateReceipt = async (userId: number): Promise<ReceiptDTO> => {
   try {

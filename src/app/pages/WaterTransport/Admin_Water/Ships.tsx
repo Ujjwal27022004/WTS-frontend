@@ -14,13 +14,15 @@ export const ShipsPage: React.FC = () => {
   const [showEditShipModal, setShowEditShipModal] = useState(false); // State for Edit Modal
   const [selectedShip, setSelectedShip] = useState<ShipDetails | null>(null); // State for the selected ship
   const [status, setStatus] = useState("");
+  const API_URL = import.meta.env.VITE_APP_API_URL;
+
 
   const shipService = new ShipService();
 
   useEffect(() => {
     const fetchShipDetails = async () => {
       try {
-        const response = await fetch("/shipdetails");
+        const response = await fetch(`${API_URL}/shipdetails`);
         if (!response.ok) throw new Error("Failed to fetch ship details");
         const data = await response.json();
         setShips(data);
@@ -67,7 +69,7 @@ export const ShipsPage: React.FC = () => {
 
   const handleAddShip = async (newShip: ShipDetails) => {
     try {
-      const response = await fetch("api/admindetails/Shipadd", {
+      const response = await fetch(`${API_URL}/api/admindetails/Shipadd`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

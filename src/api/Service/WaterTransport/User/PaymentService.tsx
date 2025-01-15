@@ -1,11 +1,12 @@
 import axios from "axios";
+const API_URL = import.meta.env.VITE_APP_API_URL;
 
 // Define the PaymentService class
 export class PaymentService {
   // API endpoint to initiate the payment
   async initiatePayment(bookingId: number, amount: number) {
     return axios
-      .post("http://localhost:8085/payments/initiate", null, {
+      .post(`${API_URL}/payments/initiate`, null, {
         params: { bookingId, amount },
       })
       .then((response) => response.data)
@@ -18,7 +19,7 @@ export class PaymentService {
   // API endpoint to confirm the payment
   async confirmPayment(paymentId: number) {
     return axios
-      .post("http://localhost:8085/payments/confirm", null, {
+      .post(`${API_URL}/payments/confirm`, null, {
         params: { paymentId },
       })
       .then((response) => response.data)

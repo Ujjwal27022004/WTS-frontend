@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8085/query-resolution";
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
+const API_BASE_URL = `${API_URL}/query-resolution`;
  // Base URL from your controller
 
 // Fetch all queries

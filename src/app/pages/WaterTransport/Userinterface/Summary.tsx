@@ -290,6 +290,8 @@ import { PaymentService } from "../../../../api/Service/WaterTransport/User/Paym
 import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
 import { generateReceipt } from "../../../../api/Service/WaterTransport/User/ReceiptService";
 import { Colors } from "chart.js";
+const API_URL = import.meta.env.VITE_APP_API_URL;
+
 
 interface LocationState {
   bookingData: {

@@ -65,7 +65,7 @@ const AdminService = {
   editShipDetails: async (shipDetail) => {
     try {
       const response = await axios.put(
-        `http://localhost:8085/api/admindetails/Shipedit`,
+        `${API_URL}/api/admindetails/Shipedit`,
         shipDetail
       );
       return response.data;
