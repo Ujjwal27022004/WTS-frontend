@@ -33,7 +33,7 @@ export const ShipsPage: React.FC = () => {
     };
 
     fetchShipDetails();
-  }, []);
+  }, [ships]);
 
   const filteredShips = ships
     .filter((ship) => ship.name.toLowerCase().includes(search.toLowerCase()))
