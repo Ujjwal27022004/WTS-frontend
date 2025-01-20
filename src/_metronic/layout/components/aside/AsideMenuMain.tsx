@@ -23,11 +23,11 @@ export function AsideMenuMainUpdated() {
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Quiz</span>
         </div> */}
       </div>
-      <AsideMenuItem
+      {/* <AsideMenuItem
         to="/Water/Employees"
         icon="element-11"
         title="Employees"
-      />
+      /> */}
       <AsideMenuItem to="Water/Revenue" icon="element-11" title="Revenue" />
       <AsideMenuItem to="Water/FAQ" icon="element-11" title="FAQ & Queries" />
     </>
