@@ -255,7 +255,7 @@ const ShipDetailsPage: React.FC = () => {
               <p className="card-text">Destination: {shipDetails.destination}</p>
               <p className="card-text">Cruise Length: {shipDetails.cruiseLength}</p>
               <p className="card-text">Cruise Type: {shipDetails.cruiseType}</p>
-              <p className="card-text">Availability: {shipDetails.availability}</p>
+              
               <p className="card-text">
                 <small className="text-muted">Rating: {shipDetails.rating}</small>
               </p>
