@@ -100,11 +100,33 @@
 
 // export default CruisePage;
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { Icon } from "leaflet"; // For customizing marker icons
+import "leaflet/dist/leaflet.css";
 
+import { geocodeLocation } from "./geocodeLocation"; // Import geocode function
 
-
+// Define the structure of Ship data type
+interface Ship {
+  shipId: number;
+  name: string;
+  description: string;
+  capacity: number;
+  source: string;
+  destination: string;
+  cruiseLength: string;
+  cruiseType: string;
+  date: string;
+  availability: string;
+  rating: number;
+  price: number;
+  sourceLat?: number;
+  sourceLon?: number;
+  destLat?: number;
+  destLon?: number;
+}
 
 const CruisePage: React.FC = () => {
   // Retrieve the ships data from location state
@@ -112,46 +134,113 @@ const CruisePage: React.FC = () => {
   const ships = state?.ships || []; // Ensure ships data exists
   const navigate = useNavigate();
 
+  // State to hold coordinates for source and destination of each ship
+  const [shipCoordinates, setShipCoordinates] = useState<{ [key: number]: { source: any, destination: any } }>({});
+
   const handleBookNow = (shipId: number) => {
     navigate(`/ship-details/${shipId}`);
   };
-  
+
+  // Fetch geocoordinates for each ship's source and destination when ships data is available
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      for (const ship of ships) {
+        const sourceCoords = await geocodeLocation(ship.source);
+        const destCoords = await geocodeLocation(ship.destination);
+
+        // Update the state with fetched coordinates
+        setShipCoordinates((prev) => ({
+          ...prev,
+          [ship.shipId]: {
+            source: sourceCoords,
+            destination: destCoords,
+          },
+        }));
+      }
+    };
+    if (ships.length > 0) fetchCoordinates();
+  }, [ships]);
 
   return (
     <div className="container mt-4">
       <div className="cruise-cards-container">
         {ships.length > 0 ? (
-          ships.map((ship, index) => (
-            <div key={index} className="card mb-4 shadow-sm">
+          ships.map((ship) => (
+            <div key={ship.shipId} className="card mb-4 shadow-sm">
               <div className="row g-0">
                 <div className="col-md-6">
                   <img
-                    src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Assuming ship object has image property
+                    src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Ship image placeholder
                     alt={ship.name}
                     className="img-fluid rounded-start"
-                    style={{ height: "500px",width:"500px", objectFit: "cover" }}
+                    style={{ height: "500px", width: "500px", objectFit: "cover" }}
                   />
                 </div>
                 <div className="col-md-6">
                   <div className="card-body">
                     <h5 className="card-title">{ship.name}</h5>
                     <p className="card-text">{ship.description}</p>
-                    <p className="card-text">Capacity : {ship.capacity}</p>
-                    <p className="card-text">Source : {ship.source}</p>
-                    <p className="card-text">Destination : {ship.destination}</p>
-                    <p className="card-text">CruiseLength : {ship.cruiseLength}</p>
-                    <p className="card-text">CruiseType : {ship.cruiseType}</p>
-                    <p className="card-text">Date : {ship.date}</p>
-                   
+                    <p className="card-text">Capacity: {ship.capacity}</p>
+                    <p className="card-text">Source: {ship.source}</p>
+                    <p className="card-text">Destination: {ship.destination}</p>
+                    <p className="card-text">CruiseLength: {ship.cruiseLength}</p>
+                    <p className="card-text">CruiseType: {ship.cruiseType}</p>
+                    <p className="card-text">Date: {ship.date}</p>
+                    <p className="card-text">Availability: {ship.availability}</p>
+                    
                     <p className="card-text">
-                      <small className="text-muted">Rating : {ship.rating}</small>
+                      <small className="text-muted">Rating: {ship.rating}</small>
                     </p>
                     <p className="card-text">
                       <strong>Price: ₹{ship.price}</strong>
                     </p>
-                    <button className="btn btn-primary" onClick={() => handleBookNow(ship.shipId)}>Book Now</button>
+                    <button className="btn btn-primary" onClick={() => handleBookNow(ship.shipId)}>
+                      Book Now
+                    </button>
                   </div>
                 </div>
+              </div>
+
+              {/* OpenSeaMap to display source and destination points */}
+              <div className="map-container mt-4" style={{ height: "100%", width: "100%" }}>
+                <MapContainer center={[20.5937, 78.9629]} zoom={4} style={{ height: "500px", width: "500px" }}>
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&copy; OpenStreetMap contributors"
+                    noWrap={true}
+                  />
+                  {/* Add markers if coordinates are available */}
+                  {shipCoordinates[ship.shipId] && (
+                    <>
+                      {shipCoordinates[ship.shipId].source && (
+                        <Marker
+                          position={shipCoordinates[ship.shipId].source}
+                          icon={new Icon({ iconUrl: 'https://example.com/source-icon.png', iconSize: [25, 25] })}
+                        >
+                          <Popup>{ship.source}</Popup>
+                        </Marker>
+                      )}
+                      {shipCoordinates[ship.shipId].destination && (
+                        <Marker
+                          position={shipCoordinates[ship.shipId].destination}
+                          icon={new Icon({ iconUrl: 'https://example.com/destination-icon.png', iconSize: [25, 25] })}
+                        >
+                          <Popup>{ship.destination}</Popup>
+                        </Marker>
+                      )}
+                      {/* Add red polyline connecting the source and destination */}
+                      <Polyline
+                        positions={[
+                          shipCoordinates[ship.shipId].source,
+                          shipCoordinates[ship.shipId].destination,
+                        ]}
+                        color="red"
+                        weight={5}
+                        opacity={1}
+                      />
+                    </>
+                  )}
+                </MapContainer>
               </div>
             </div>
           ))
