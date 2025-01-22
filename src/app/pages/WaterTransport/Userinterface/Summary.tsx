@@ -290,8 +290,8 @@ import { PaymentService } from "../../../../api/Service/WaterTransport/User/Paym
 import { PassengerService } from "../../../../api/Service/WaterTransport/User/PassengerService";
 import { generateReceipt } from "../../../../api/Service/WaterTransport/User/ReceiptService";
 import { Colors } from "chart.js";
-import ChatBotComponent from "./ChatBotComponent";
 const API_URL = import.meta.env.VITE_APP_API_URL;
+import axios from "axios";
 
 
 interface LocationState {
@@ -380,85 +380,79 @@ const SummaryPage: React.FC = () => {
       const [paymentID, setPaymentID] = useState<string | null>(null); // Initialize state to hold paymentID
 
 
-  const handlePayment = async () => {
-    if (!selectedPaymentMethod) {
-      alert("Please select a payment method.");
-      return;
-    }
+ 
+      const handlePayment = async () => {
+        const receiptData = {
+          amount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
+          date: new Date().toISOString(), // Current date in ISO format
+          shipId: bookingDetails.shipId,
+          userId: bookingDetails.userid,
+          paymentId: Number(paymentID),
+        };
+        if (!selectedPaymentMethod) {
+          alert("Please select a payment method.");
+          return;
+        }
+        try {
+          // Prepare the payload for your backend
+          const productRequest = {
+            name: bookingDetails.cruise.name,
+            amount: bookingDetails.cruise.price * 100, // Amount in smallest currency unit
+            quantity: bookingDetails.numTravelers || 1,
+            currency: "INR",
+            // successUrl: ${window.location.origin}/metronic8/react/demo8/home
+          };
+  
+          const payment = await paymentService.initiatePayment( Number (bookingDetails.bookingId), productRequest.amount );
+          const { paymentID: paymentIdFromResponse } = payment; // Extract paymentID from the response
+          setPaymentID(paymentIdFromResponse); // Set paymentID to state
+          console.log(paymentID)
+    
+          // Call the backend to create a Stripe session
+          const response = await axios.post("http://localhost:8085/product/v1/checkout", productRequest);
+          const { sessionUrl } = response.data;
+    
+          if (sessionUrl) {
+            // Navigate to the Stripe checkout page
+            window.location.href = sessionUrl;
 
-    const totalAmount = bookingDetails.cruise.price * (bookingDetails.numTravelers || 1);
+            navigate("/receipt", {
+              state: {
+                cruise: bookingDetails.cruise,
+                numTravelers: bookingDetails.numTravelers,
+                userInfo: bookingDetails.userid,
+                paymentMethod: selectedPaymentMethod,
+                totalAmount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
+                passengers:passengers,
+                receipt:receiptData
+              },
+            });
+          } else {
+            alert("Failed to create payment session. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error creating payment session:", error);
+          alert("An error occurred. Please try again later.");
+        } 
+       };
+  
 
-    try {
-      // Call the initiate payment API
-      const payment = await paymentService.initiatePayment( Number (bookingDetails.bookingId), totalAmount);
-      const { paymentID: paymentIdFromResponse } = payment; // Extract paymentID from the response
-      setPaymentID(paymentIdFromResponse); // Set paymentID to state
-
-      console.log(paymentID)
-      setShowConfirmationPopup(true); // Show the confirmation popup
-
-    } catch (error) {
-      console.error("Payment initiation failed:", error);
-      alert("Failed to initiate payment.");
-    }
-  };
-
-  const handleConfirmPayment = async () => {
-    if (paymentID === null) {
-      alert("Payment ID is missing.");
-      return;
-    }
-    console.log(paymentID)
-
-    try {
-      // Call the confirm payment API
-      const response = await paymentService.confirmPayment(Number(paymentID));
-      alert(response); // Show success message
-
-      const receiptData = {
-        amount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
-        date: new Date().toISOString(), // Current date in ISO format
-        shipId: bookingDetails.shipId,
-        userId: bookingDetails.userid,
-        paymentId: Number(paymentID),
-      };
-
-      const receiptResponse = await generateReceipt(receiptData.userId);
-      console.log(receiptResponse)
-      console.log(passengers)
-
-    alert("Receipt generated successfully!");
-      navigate("/receipt", {
-        state: {
-          cruise: bookingDetails.cruise,
-          numTravelers: bookingDetails.numTravelers,
-          userInfo: bookingDetails.userid,
-          paymentMethod: selectedPaymentMethod,
-          totalAmount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
-          passengers:passengers,
-          receipt:receiptData
-        },
-      });
-    } catch (error) {
-      console.error("Payment confirmation failed:", error);
-      alert("Failed to confirm payment.");
-    }
-  };
 
   return (
-    <><div className="container mt-4">
+    <div className="container mt-4">
       <h3>Booking Summary</h3>
-
+          
       <div className="card">
         <div className="card-body" style={{ display: "flex", flexWrap: "wrap" }}>
-          <div style={{ flex: "1 1 300px", marginRight: "20px" }}>
-            <img
+        <div style={{ flex: "1 1 300px", marginRight: "20px" }}>
+             <img
               src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt={bookingDetails.cruise.name}
               className="img-fluid"
-              style={{ height: "400px", width: "400px", objectFit: "cover" }} />
+              style={{ height: "400px", width:"400px", objectFit: "cover" }}
+            />
           </div>
-          <div style={{ flex: "2  400px", margin: "10px" }}>
+          <div style={{ flex: "2  400px",margin:"10px" }}>
             <h1>{bookingDetails.cruise.name}</h1>
             <h4>CruiseType : {bookingDetails.cruise.cruiseType}</h4>
             <h4>Source : {bookingDetails.cruise.source}</h4>
@@ -478,61 +472,69 @@ const SummaryPage: React.FC = () => {
 
         <div style={{ marginTop: "20px", padding: "10px" }}>
           <h1>Payment Details</h1>
-          <h2>
+          <h2> 
             <strong>Total Price:</strong> ₹
             {bookingDetails.cruise.price * (bookingDetails.numTravelers || 1)}
           </h2>
 
           <div className="mt-10">
-            <div className="mt-4">
-              <h1>Passenger Details</h1>
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowPassengerForm(true)}
-              >
-                Add Passenger
-              </button>
+          <div className="mt-4">
+            <h1>Passenger Details</h1>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowPassengerForm(true)}
+            >
+              Add Passenger
+            </button>
 
-              {showPassengerForm && (
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    className="form-control mb-2"
-                    value={newPassenger.name}
-                    onChange={(e) => setNewPassenger({ ...newPassenger, name: e.target.value })} />
-                  <input
-                    type="number"
-                    placeholder="Age"
-                    className="form-control mb-2"
-                    value={newPassenger.age}
-                    onChange={(e) => setNewPassenger({ ...newPassenger, age: e.target.value })} />
-                  <select
-                    className="form-control mb-2"
-                    value={newPassenger.gender}
-                    onChange={(e) => setNewPassenger({ ...newPassenger, gender: e.target.value })}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <button
-                    className="btn btn-success"
-                    onClick={handleAddPassenger}
-                  >
-                    Save Passenger
-                  </button>
-                </div>
-              )}
-              <ul className="list-group mt-3">
-                {passengers.map((p, index) => (
-                  <li key={index} className="list-group-item">
-                    {p.name} - {p.age} years - {p.gender}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {showPassengerForm && (
+              <div className="mt-3">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  className="form-control mb-2"
+                  value={newPassenger.name}
+                  onChange={(e) =>
+                    setNewPassenger({ ...newPassenger, name: e.target.value })
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="Age"
+                  className="form-control mb-2"
+                  value={newPassenger.age}
+                  onChange={(e) =>
+                    setNewPassenger({ ...newPassenger, age: e.target.value })
+                  }
+                />
+                <select
+                  className="form-control mb-2"
+                  value={newPassenger.gender}
+                  onChange={(e) =>
+                    setNewPassenger({ ...newPassenger, gender: e.target.value })
+                  }
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <button
+                  className="btn btn-success"
+                  onClick={handleAddPassenger}
+                >
+                  Save Passenger
+                </button>
+              </div>
+            )}
+            <ul className="list-group mt-3">
+              {passengers.map((p, index) => (
+                <li key={index} className="list-group-item">
+                  {p.name} - {p.age} years - {p.gender}
+                </li>
+              ))}
+            </ul>
+          </div>
           </div>
 
           <div className="mt-10">
@@ -544,7 +546,8 @@ const SummaryPage: React.FC = () => {
                 name="paymentMethod"
                 id="creditCard"
                 value="Credit Card"
-                onChange={(e) => setSelectedPaymentMethod(e.target.value)} />
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              />
               <label className="form-check-label" htmlFor="creditCard">
                 <FaCreditCard /> Credit Card
               </label>
@@ -556,7 +559,8 @@ const SummaryPage: React.FC = () => {
                 name="paymentMethod"
                 id="wallet"
                 value="Wallet"
-                onChange={(e) => setSelectedPaymentMethod(e.target.value)} />
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              />
               <label className="form-check-label" htmlFor="wallet">
                 <FaWallet /> Wallet
               </label>
@@ -568,7 +572,8 @@ const SummaryPage: React.FC = () => {
                 name="paymentMethod"
                 id="upi"
                 value="UPI"
-                onChange={(e) => setSelectedPaymentMethod(e.target.value)} />
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              />
               <label className="form-check-label" htmlFor="upi">
                 <FaPhone /> UPI
               </label>
@@ -579,46 +584,8 @@ const SummaryPage: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Payment Confirmation Modal */}
-      {showConfirmationPopup && (
-        <div className="modal show" style={{ display: "block" }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirm Payment</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowConfirmationPopup(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to confirm the payment?</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowConfirmationPopup(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleConfirmPayment}
-                >
-                  Confirm Payment
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div><ChatBotComponent></ChatBotComponent></>
+    </div>
   );
 };
 
 export default SummaryPage;
-
