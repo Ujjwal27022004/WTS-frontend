@@ -26,34 +26,41 @@ const Login : React.FC = () => {
     };
 
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+      e.preventDefault();
+      setError("");
 
-        if (!validateForm()) return;
+      if (!validateForm()) return;
 
-        const loginData: LoginBasicInfo = {email, password};
+      const loginData: LoginBasicInfo = { email, password };
 
-        try {
-            const [adminData, userData] = await Promise.all([
-                AuthService.Adminlogin(loginData),
-                AuthService.login(loginData),
-            ]);
+      try {
+        if (selectedOption === "Admin") {
+          const adminData = await AuthService.Adminlogin(loginData);
 
-            if (adminData.status && adminData.role === "admin") {
-                console.log("Navigating to Admin Dashboard");
-                saveAuth(adminData);
-                navigate("/Water/Admindashboard");
-            } else if (userData.status && userData.role === "user") {
-                console.log("Navigating to User Dashboard");
-                saveAuth(userData);
-                navigate("/home");
-            } else {
-                setError("Login failed. Please check your credentials.");
-            }
-        } catch (err) {
-            setError("An unexpected error occurred. Please try again later.");
+          if (adminData.status && adminData.role === "admin") {
+            console.log("Navigating to Admin Dashboard");
+            saveAuth(adminData);
+            navigate("/Water/Admindashboard");
+          } else {
+            setError("Invalid admin credentials.");
+          }
+        } else {
+          const userData = await AuthService.login(loginData);
+
+          if (userData.status && userData.role === "user") {
+            console.log("Navigating to User Dashboard");
+            saveAuth(userData);
+            navigate("/home");
+          } else {
+            setError("Invalid user credentials.");
+          }
         }
+      } catch (err: any) {
+        setError("An unexpected error occurred. Please try again later.");
+        console.error("Login error:", err.message);
+      }
     };
+
 
     return (
         <div
