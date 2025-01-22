@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Passenger } from "../../../../api/Model/WaterTransport/User/Passenger";
+import ChatBotComponent from "./ChatBotComponent";
 
 const ReceiptPage: React.FC = () => {
   const location = useLocation();
@@ -58,7 +59,7 @@ const ReceiptPage: React.FC = () => {
   };
 
   return (
-    <div
+    <><div
       className="container mt-4"
       style={{
         maxWidth: "800px",
@@ -130,19 +131,19 @@ const ReceiptPage: React.FC = () => {
               {receiptDetails.numTravelers}
             </p>
             <h5
-            style={{
-              fontSize: "18px",
-              fontWeight: "bold",
-              color: "#555",
-              marginBottom: "15px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "5px",
-            }}
-          >Passenger Details:</h5>
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#555",
+                marginBottom: "15px",
+                borderBottom: "1px solid #ddd",
+                paddingBottom: "5px",
+              }}
+            >Passenger Details:</h5>
             {receiptDetails.passengers.length > 0 ? (
               <ul>
                 {receiptDetails.passengers.map((passenger, index) => (
-                  <li key={index}>Passenger {index+1}<br></br>
+                  <li key={index}>Passenger {index + 1}<br></br>
                     <strong>Name</strong> : {passenger.name} <br></br> <strong>Age</strong> : {passenger.age} years old{" "}<br></br>
                     <strong>Gender</strong> : {passenger.gender}
                   </li>
@@ -154,35 +155,35 @@ const ReceiptPage: React.FC = () => {
           </div>
 
           {/* <h5
-            style={{
-              fontSize: "18px",
-              fontWeight: "bold",
-              color: "#555",
-              marginBottom: "15px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "5px",
-            }}
-          >
-            User Information
-          </h5>
-          <div
-            style={{
-              lineHeight: "1.8",
-              fontSize: "14px",
-              color: "#444",
-              marginBottom: "20px",
-            }}
-          >
-            <p>
-              <strong>Name:</strong> {receiptDetails.userInfo.name}
-            </p>
-            <p>
-              <strong>Email:</strong> {receiptDetails.userInfo.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {receiptDetails.userInfo.phone}
-            </p>
-          </div> */}
+      style={{
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#555",
+        marginBottom: "15px",
+        borderBottom: "1px solid #ddd",
+        paddingBottom: "5px",
+      }}
+    >
+      User Information
+    </h5>
+    <div
+      style={{
+        lineHeight: "1.8",
+        fontSize: "14px",
+        color: "#444",
+        marginBottom: "20px",
+      }}
+    >
+      <p>
+        <strong>Name:</strong> {receiptDetails.userInfo.name}
+      </p>
+      <p>
+        <strong>Email:</strong> {receiptDetails.userInfo.email}
+      </p>
+      <p>
+        <strong>Phone:</strong> {receiptDetails.userInfo.phone}
+      </p>
+    </div> */}
 
           <h5
             style={{
@@ -252,7 +253,7 @@ const ReceiptPage: React.FC = () => {
           Download Receipt
         </button>
       </div>
-    </div>
+    </div><ChatBotComponent></ChatBotComponent></>
   );
 };
 
