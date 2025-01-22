@@ -773,6 +773,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { faCloudSunRain } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ChatBotComponent from "./ChatBotComponent";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 const HomeMain = () => {
@@ -978,10 +979,8 @@ const HomeMain = () => {
     : null;
 
   return (
-    <div
-      className={`d-flex ${
-        darkMode ? "bg-dark text-light" : "bg-light text-dark"
-      }`}
+    <><div
+      className={`d-flex ${darkMode ? "bg-dark text-light" : "bg-light text-dark"}`}
       style={{ minHeight: "100vh", transition: "background-color 0.3s ease" }}
     >
       {/* Dashboard */}
@@ -1003,8 +1002,7 @@ const HomeMain = () => {
               height: "100px",
               border: "3px solid #fff",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-            }}
-          />
+            }} />
           <h5
             className="text-center mb-2"
             style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#2196F3" }}
@@ -1133,8 +1131,7 @@ const HomeMain = () => {
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   transition: "all 0.3s ease",
-                }}
-              />
+                }} />
               <input
                 type="email"
                 className="form-control mb-3"
@@ -1145,8 +1142,7 @@ const HomeMain = () => {
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   transition: "all 0.3s ease",
-                }}
-              />
+                }} />
               <div className="text-center">
                 <button
                   className="btn btn-primary"
@@ -1196,8 +1192,7 @@ const HomeMain = () => {
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   transition: "all 0.3s ease",
-                }}
-              />
+                }} />
               <input
                 type="email"
                 className="form-control mb-3"
@@ -1208,8 +1203,7 @@ const HomeMain = () => {
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   transition: "all 0.3s ease",
-                }}
-              />
+                }} />
               <div className="text-center">
                 <button
                   className="btn btn-primary"
@@ -1279,13 +1273,11 @@ const HomeMain = () => {
                           </td>
                           <td>
                             <span
-                              className={`badge ${
-                                query.status === "Resolved"
+                              className={`badge ${query.status === "Resolved"
                                   ? "bg-success"
                                   : query.status === "Pending"
-                                  ? "bg-warning text-dark"
-                                  : "bg-secondary"
-                              }`}
+                                    ? "bg-warning text-dark"
+                                    : "bg-secondary"}`}
                             >
                               {query.status}
                             </span>
@@ -1373,13 +1365,11 @@ const HomeMain = () => {
                           <td>₹{booking.totalPrice}</td>
                           <td>
                             <span
-                              className={`badge ${
-                                booking.bookingStatus === "Confirmed"
+                              className={`badge ${booking.bookingStatus === "Confirmed"
                                   ? "bg-success"
                                   : booking.bookingStatus === "Pending"
-                                  ? "bg-warning text-dark"
-                                  : "bg-secondary"
-                              }`}
+                                    ? "bg-warning text-dark"
+                                    : "bg-secondary"}`}
                             >
                               {booking.bookingStatus}
                             </span>
@@ -1410,9 +1400,7 @@ const HomeMain = () => {
       {/* Main Content */}
       <div className="container mt-4 flex-grow-1">
         <div
-          className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${
-            darkMode ? "bg-secondary text-white" : "bg-light text-dark"
-          }`}
+          className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${darkMode ? "bg-secondary text-white" : "bg-light text-dark"}`}
         >
           <div>
             <h4>Water Transportation System</h4>
@@ -1449,8 +1437,7 @@ const HomeMain = () => {
                   className="form-control"
                   placeholder="Enter Source"
                   value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                />
+                  onChange={(e) => setSource(e.target.value)} />
               </div>
               <div className="col-md-3">
                 <label htmlFor="destination" className="form-label">
@@ -1462,8 +1449,7 @@ const HomeMain = () => {
                   className="form-control"
                   placeholder="Enter Destination"
                   value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                />
+                  onChange={(e) => setDestination(e.target.value)} />
               </div>
               <div className="col-md-3">
                 <label htmlFor="dateTo" className="form-label">
@@ -1485,8 +1471,7 @@ const HomeMain = () => {
                   type="number"
                   id="numTravelers"
                   className="form-control"
-                  placeholder="Travelers"
-                />
+                  placeholder="Travelers" />
               </div>
               <div className="col-md-3">
                 <label htmlFor="cruiseType" className="form-label">
@@ -1519,8 +1504,7 @@ const HomeMain = () => {
                       color: "#f7c300",
                       cursor: "pointer",
                     }}
-                    onClick={handleCheckWeather}
-                  />
+                    onClick={handleCheckWeather} />
                 </div>
               </div>
             </div>
@@ -1706,7 +1690,7 @@ const HomeMain = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div><ChatBotComponent></ChatBotComponent></>
   );
 };
 

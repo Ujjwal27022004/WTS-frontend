@@ -10,20 +10,21 @@ type Props = {
 
 const KTCardBody: FC<Props & WithChildren> = (props) => {
   const {className, scroll, height, children} = props
-  return (
-    <div
-      className={clsx(
-        'card-body',
-        className && className,
-        {
-          'card-scroll': scroll,
-        },
-        height && `h-${height}px`
-      )}
-    >
-      {children}
-    </div>
-  )
+  // return (
+  //   <div
+  //     className={clsx(
+  //       'card-body',
+  //       className && className,
+  //       {
+  //         'card-scroll': scroll,
+  //       },
+  //       height && `h-${height}px`
+  //     )}
+  //   >
+  //     {children}
+  //   </div>
+  // )
+  return null;
 }
 
 export {KTCardBody}

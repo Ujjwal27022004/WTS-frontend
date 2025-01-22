@@ -61,7 +61,7 @@
 
 //     const bookingData: Booking = {
 //       seatsBooked: numTravelers,
-//       bookingStatus: "PENDING", 
+//       bookingStatus: "PENDING",
 //       userid: parsedUserId, // Ensure valid userId
 //       shipId: shipDetails.shipId,
 //     };
@@ -69,7 +69,6 @@
 //     try {
 //       const createdbooking  = await createBooking(bookingData);
 //       console.log(createdbooking)
-    
 
 //       navigate("/summary", { state: { bookingData, shipDetails,createdbooking } });
 //     } catch (error) {
@@ -82,7 +81,7 @@
 //   }
 
 //   return (
-    
+
 //     <div className="container mt-4">
 //       <div className="card shadow-sm">
 //         <div className="card-header">
@@ -138,16 +137,14 @@
 
 // export default ShipDetailsPage;
 
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { createBooking } from "../../../../api/Service/WaterTransport/User/BookingService";
 import { getRemainingSeats } from "../../../../api/Service/WaterTransport/User/availabilityService"; // Import service
 import { Booking } from "../../../../api/Model/WaterTransport/User/booking";
+import ChatBotComponent from "./ChatBotComponent";
 const API_URL = import.meta.env.VITE_APP_API_URL;
-
 
 const ShipDetailsPage: React.FC = () => {
   const { shipId } = useParams<{ shipId: string }>();
@@ -218,7 +215,9 @@ const ShipDetailsPage: React.FC = () => {
 
     try {
       const createdbooking = await createBooking(bookingData);
-      navigate("/summary", { state: { bookingData, shipDetails, createdbooking } });
+      navigate("/summary", {
+        state: { bookingData, shipDetails, createdbooking },
+      });
     } catch (error) {
       alert("Failed to create booking. Please try again.");
     }
@@ -229,62 +228,87 @@ const ShipDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="container mt-4">
-      <div className="card shadow-sm">
-        <div className="card-header">
-          <h3 className="card-title">{shipDetails.name}</h3>
-        </div>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-6">
-              <img
-                src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt={shipDetails?.name || "Ship Image"}
-                className="img-fluid rounded-start"
-                style={{ height: "550px",width:"500px",margin:"0",padding:"0", objectFit: "cover" }}
-              />
-            </div>
-            <div className="col-md-6">
-              <h2 className="card-title">{shipDetails.name}</h2>
-              <p className="card-text">{shipDetails.description}</p>
-              <p className="card-text">
-                <strong>Price: ₹{shipDetails.price}</strong>
-              </p>
-              <p className="card-text">Capacity: {shipDetails.capacity}</p>
-              <p className="card-text">Source: {shipDetails.source}</p>
-              <p className="card-text">Destination: {shipDetails.destination}</p>
-              <p className="card-text">Cruise Length: {shipDetails.cruiseLength}</p>
-              <p className="card-text">Cruise Type: {shipDetails.cruiseType}</p>
-              
-              <p className="card-text">
-                <small className="text-muted">Rating: {shipDetails.rating}</small>
-              </p>
-              <div className="mb-3">
-                <label className="form-label">Number of Travelers</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  min="1"
-                  value={numTravelers}
-                  onChange={(e) => setNumTravelers(Number(e.target.value))}
+    <>
+      <div className="container mt-4">
+        <div className="card shadow-sm">
+          <div className="card-header">
+            <h3 className="card-title">{shipDetails.name}</h3>
+          </div>
+          <div className="card-body">
+            <div className="row">
+              <div className="col-md-6">
+                <img
+                  src="https://images.unsplash.com/photo-1606255635975-92851ad290cb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt={shipDetails?.name || "Ship Image"}
+                  className="img-fluid rounded-start"
+                  style={{
+                    height: "550px",
+                    width: "500px",
+                    margin: "0",
+                    padding: "0",
+                    objectFit: "cover",
+                  }}
                 />
               </div>
-              <button className="btn btn-info me-2" onClick={handleCheckAvailability}>
-                Check Availability
-              </button><br></br>
-              {remainingSeats !== null && (
-                <h3>Remaining Seats: <strong>{remainingSeats}</strong></h3>
-              )}
-              <button className="btn btn-primary float-end" onClick={handleSaveBooking}>
-                Save Booking
-              </button>
+              <div className="col-md-6">
+                <h2 className="card-title">{shipDetails.name}</h2>
+                <p className="card-text">{shipDetails.description}</p>
+                <p className="card-text">
+                  <strong>Price: ₹{shipDetails.price}</strong>
+                </p>
+                <p className="card-text">Capacity: {shipDetails.capacity}</p>
+                <p className="card-text">Source: {shipDetails.source}</p>
+                <p className="card-text">
+                  Destination: {shipDetails.destination}
+                </p>
+                <p className="card-text">
+                  Cruise Length: {shipDetails.cruiseLength}
+                </p>
+                <p className="card-text">
+                  Cruise Type: {shipDetails.cruiseType}
+                </p>
+
+                <p className="card-text">
+                  <small className="text-muted">
+                    Rating: {shipDetails.rating}
+                  </small>
+                </p>
+                <div className="mb-3">
+                  <label className="form-label">Number of Travelers</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="1"
+                    value={numTravelers}
+                    onChange={(e) => setNumTravelers(Number(e.target.value))}
+                  />
+                </div>
+                <button
+                  className="btn btn-info me-2"
+                  onClick={handleCheckAvailability}
+                >
+                  Check Availability
+                </button>
+                <br></br>
+                {remainingSeats !== null && (
+                  <h3>
+                    Remaining Seats: <strong>{remainingSeats}</strong>
+                  </h3>
+                )}
+                <button
+                  className="btn btn-primary float-end"
+                  onClick={handleSaveBooking}
+                >
+                  Save Booking
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <ChatBotComponent></ChatBotComponent>
+    </>
   );
 };
 
 export default ShipDetailsPage;
-

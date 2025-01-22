@@ -13,19 +13,20 @@ const KTIcon: React.FC<Props> = ({className = '', iconType, iconName}) => {
     iconType = getLayout().main?.iconType
   }
 
-  return (
-    <i className={`ki-${iconType} ki-${iconName}${className && ' ' + className}`}>
-      {iconType === 'duotone' &&
-        [...Array(icons[iconName])].map((e, i) => {
-          return (
-            <span
-              key={`${iconType}-${iconName}-${className}-path-${i + 1}`}
-              className={`path${i + 1}`}
-            ></span>
-          )
-        })}
-    </i>
-  )
+  // return (
+  //   <i className={`ki-${iconType} ki-${iconName}${className && ' ' + className}`}>
+  //     {iconType === 'duotone' &&
+  //       [...Array(icons[iconName])].map((e, i) => {
+  //         return (
+  //           <span
+  //             key={`${iconType}-${iconName}-${className}-path-${i + 1}`}
+  //             className={`path${i + 1}`}
+  //           ></span>
+  //         )
+  //       })}
+  //   </i>
+  // )
+  return null;
 }
 
 export {KTIcon}
