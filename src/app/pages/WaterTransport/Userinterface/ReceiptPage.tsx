@@ -58,78 +58,44 @@ const ReceiptPage: React.FC = () => {
     pdf.save(`receipt-${receiptDetails.cruise.id}.pdf`);
   };
 
+  const handleReturnHome = () => {
+    navigate("/home");
+  };
+
   return (
-    <><div
-      className="container mt-4"
-      style={{
-        maxWidth: "800px",
-        fontFamily: "Arial, sans-serif",
-        backgroundColor: "#f9f9f9",
-        padding: "20px",
-        borderRadius: "10px",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <h3
-        style={{
-          textAlign: "center",
-          marginBottom: "20px",
-          color: "#333",
-          textTransform: "uppercase",
-        }}
-      >
-        Payment Receipt
-      </h3>
+    <>
       <div
-        id="receipt"
-        className="card"
+        className="container mt-4"
         style={{
-          border: "none",
-          backgroundColor: "#ffffff",
+          maxWidth: "800px",
+          fontFamily: "Arial, sans-serif",
+          backgroundColor: "#f9f9f9",
           padding: "20px",
           borderRadius: "10px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <div className="card-body">
-          <h5
-            style={{
-              fontSize: "18px",
-              fontWeight: "bold",
-              color: "#555",
-              marginBottom: "15px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "5px",
-            }}
-          >
-            Booking Summary
-          </h5>
-          <div
-            style={{
-              lineHeight: "1.8",
-              fontSize: "14px",
-              color: "#444",
-              marginBottom: "20px",
-            }}
-          >
-            <p>
-              <strong>Ship ID:</strong> {receiptDetails.cruise.shipId}
-            </p>
-            <p>
-              <strong>Ship Name:</strong> {receiptDetails.cruise.name}
-            </p>
-            <p>
-              <strong>Source:</strong> {receiptDetails.cruise.source}
-            </p>
-            <p>
-              <strong>Destination:</strong> {receiptDetails.cruise.destination}
-            </p>
-            <p>
-              <strong>Travel Date:</strong> {receiptDetails.cruise.date}
-            </p>
-            <p>
-              <strong>Number of Travelers:</strong>{" "}
-              {receiptDetails.numTravelers}
-            </p>
+        <h3
+          style={{
+            textAlign: "center",
+            marginBottom: "20px",
+            color: "#333",
+            textTransform: "uppercase",
+          }}
+        >
+          Payment Receipt
+        </h3>
+        <div
+          id="receipt"
+          className="card"
+          style={{
+            border: "none",
+            backgroundColor: "#ffffff",
+            padding: "20px",
+            borderRadius: "10px",
+          }}
+        >
+          <div className="card-body">
             <h5
               style={{
                 fontSize: "18px",
@@ -139,121 +105,154 @@ const ReceiptPage: React.FC = () => {
                 borderBottom: "1px solid #ddd",
                 paddingBottom: "5px",
               }}
-            >Passenger Details:</h5>
-            {receiptDetails.passengers.length > 0 ? (
-              <ul>
-                {receiptDetails.passengers.map((passenger, index) => (
-                  <li key={index}>Passenger {index + 1}<br></br>
-                    <strong>Name</strong> : {passenger.name} <br></br> <strong>Age</strong> : {passenger.age} years old{" "}<br></br>
-                    <strong>Gender</strong> : {passenger.gender}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No passengers found.</p>
-            )}
-          </div>
+            >
+              Booking Summary
+            </h5>
+            <div
+              style={{
+                lineHeight: "1.8",
+                fontSize: "14px",
+                color: "#444",
+                marginBottom: "20px",
+              }}
+            >
+              <p>
+                <strong>Ship ID:</strong> {receiptDetails.cruise.shipId}
+              </p>
+              <p>
+                <strong>Ship Name:</strong> {receiptDetails.cruise.name}
+              </p>
+              <p>
+                <strong>Source:</strong> {receiptDetails.cruise.source}
+              </p>
+              <p>
+                <strong>Destination:</strong>{" "}
+                {receiptDetails.cruise.destination}
+              </p>
+              <p>
+                <strong>Travel Date:</strong> {receiptDetails.cruise.date}
+              </p>
+              <p>
+                <strong>Number of Travelers:</strong>{" "}
+                {receiptDetails.numTravelers}
+              </p>
+              <h5
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "#555",
+                  marginBottom: "15px",
+                  borderBottom: "1px solid #ddd",
+                  paddingBottom: "5px",
+                }}
+              >
+                Passenger Details:
+              </h5>
+              {receiptDetails.passengers.length > 0 ? (
+                <ul>
+                  {receiptDetails.passengers.map((passenger, index) => (
+                    <li key={index}>
+                      Passenger {index + 1}
+                      <br />
+                      <strong>Name</strong> : {passenger.name} <br />{" "}
+                      <strong>Age</strong> : {passenger.age} years old <br />{" "}
+                      <strong>Gender</strong> : {passenger.gender}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No passengers found.</p>
+              )}
+            </div>
 
-          {/* <h5
-      style={{
-        fontSize: "18px",
-        fontWeight: "bold",
-        color: "#555",
-        marginBottom: "15px",
-        borderBottom: "1px solid #ddd",
-        paddingBottom: "5px",
-      }}
-    >
-      User Information
-    </h5>
-    <div
-      style={{
-        lineHeight: "1.8",
-        fontSize: "14px",
-        color: "#444",
-        marginBottom: "20px",
-      }}
-    >
-      <p>
-        <strong>Name:</strong> {receiptDetails.userInfo.name}
-      </p>
-      <p>
-        <strong>Email:</strong> {receiptDetails.userInfo.email}
-      </p>
-      <p>
-        <strong>Phone:</strong> {receiptDetails.userInfo.phone}
-      </p>
-    </div> */}
+            <h5
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#555",
+                marginBottom: "15px",
+                borderBottom: "1px solid #ddd",
+                paddingBottom: "5px",
+              }}
+            >
+              Payment Details
+            </h5>
+            <div
+              style={{
+                lineHeight: "1.8",
+                fontSize: "14px",
+                color: "#444",
+                marginBottom: "20px",
+              }}
+            >
+              <p>
+                <strong>Payment Method:</strong> {receiptDetails.paymentMethod}
+              </p>
+              <p>
+                <strong>Total Amount Paid:</strong> ₹
+                {receiptDetails.totalAmount}
+              </p>
+            </div>
 
-          <h5
-            style={{
-              fontSize: "18px",
-              fontWeight: "bold",
-              color: "#555",
-              marginBottom: "15px",
-              borderBottom: "1px solid #ddd",
-              paddingBottom: "5px",
-            }}
-          >
-            Payment Details
-          </h5>
-          <div
-            style={{
-              lineHeight: "1.8",
-              fontSize: "14px",
-              color: "#444",
-              marginBottom: "20px",
-            }}
-          >
-            <p>
-              <strong>Payment Method:</strong> {receiptDetails.paymentMethod}
+            <h5
+              style={{
+                textAlign: "center",
+                color: "#28a745",
+                marginTop: "30px",
+                fontSize: "16px",
+              }}
+            >
+              Thank You!
+            </h5>
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "14px",
+                color: "#555",
+                marginTop: "10px",
+              }}
+            >
+              Your booking has been confirmed. Enjoy your journey!
             </p>
-            <p>
-              <strong>Total Amount Paid:</strong> ₹{receiptDetails.totalAmount}
-            </p>
           </div>
+        </div>
 
-          <h5
+        <div style={{ textAlign: "center", marginTop: "20px 20px" }}>
+          <button
+            className="btn btn-primary"
+            onClick={handleDownloadReceipt}
             style={{
-              textAlign: "center",
-              color: "#28a745",
-              marginTop: "30px",
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
               fontSize: "16px",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginRight: "10px",
             }}
           >
-            Thank You!
-          </h5>
-          <p
+            Download Receipt
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleReturnHome}
             style={{
-              textAlign: "center",
-              fontSize: "14px",
-              color: "#555",
-              marginTop: "10px",
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              cursor: "pointer",
             }}
           >
-            Your booking has been confirmed. Enjoy your journey!
-          </p>
+            Return Home
+          </button>
         </div>
       </div>
-
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <button
-          className="btn btn-primary"
-          onClick={handleDownloadReceipt}
-          style={{
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            padding: "10px 20px",
-            fontSize: "16px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Download Receipt
-        </button>
-      </div>
-    </div><ChatBotComponent></ChatBotComponent></>
+      <ChatBotComponent />
+    </>
   );
 };
 
