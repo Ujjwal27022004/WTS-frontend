@@ -980,9 +980,8 @@ const HomeMain = () => {
   return (
     <>
       <div
-        className={`d-flex ${
-          darkMode ? "bg-dark text-light" : "bg-light text-dark"
-        }`}
+        className={`d-flex ${darkMode ? "bg-dark text-light" : "bg-light text-dark"
+          }`}
         style={{ minHeight: "100vh", transition: "background-color 0.3s ease" }}
       >
         {/* Dashboard */}
@@ -1003,7 +1002,7 @@ const HomeMain = () => {
                 width: "100px",
                 height: "100px",
                 border: "3px solid #fff",
-                
+
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
               }}
             />
@@ -1291,13 +1290,12 @@ const HomeMain = () => {
                             </td>
                             <td>
                               <span
-                                className={`badge ${
-                                  query.status === "Resolved"
+                                className={`badge ${query.status === "Resolved"
                                     ? "bg-success"
                                     : query.status === "Pending"
-                                    ? "bg-warning text-dark"
-                                    : "bg-secondary"
-                                }`}
+                                      ? "bg-warning text-dark"
+                                      : "bg-secondary"
+                                  }`}
                               >
                                 {query.status}
                               </span>
@@ -1387,13 +1385,12 @@ const HomeMain = () => {
                             <td>₹{booking.totalPrice}</td>
                             <td>
                               <span
-                                className={`badge ${
-                                  booking.bookingStatus === "Confirmed"
+                                className={`badge ${booking.bookingStatus === "Confirmed"
                                     ? "bg-success"
                                     : booking.bookingStatus === "Pending"
-                                    ? "bg-warning text-dark"
-                                    : "bg-secondary"
-                                }`}
+                                      ? "bg-warning text-dark"
+                                      : "bg-secondary"
+                                  }`}
                               >
                                 {booking.bookingStatus}
                               </span>
@@ -1424,9 +1421,8 @@ const HomeMain = () => {
         {/* Main Content */}
         <div className="container mt-4 flex-grow-1">
           <div
-            className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${
-              darkMode ? "bg-secondary text-white" : "bg-light text-dark"
-            }`}
+            className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${darkMode ? "bg-secondary text-white" : "bg-light text-dark"
+              }`}
           >
             <div
               style={{
@@ -1452,9 +1448,8 @@ const HomeMain = () => {
 
             <div>
               <button
-                className={`btn ${
-                  darkMode ? "btn-light" : "btn-secondary"
-                } me-2`}
+                className={`btn ${darkMode ? "btn-light" : "btn-secondary"
+                  } me-2`}
                 onClick={() => setDarkMode(!darkMode)}
               >
                 Dark Mode
@@ -1712,6 +1707,20 @@ const HomeMain = () => {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+
+          <div className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${darkMode ? "bg-secondary text-white" : "bg-light text-dark"
+            }`}>
+            <h2 style={{ color: "black", textAlign: "center" }}>Plan your Trip</h2>
+
+
+            <div className="map-container mt-4" style={{ height: "400px", width: "100%", margin: "20px" }}>
+              <iframe
+                src="https://map.openseamap.org"
+                style={{ border: "solid black 2px", height: "100%", width: "100%" }}
+                title="OpenSeaMap"
+              />
             </div>
           </div>
 
