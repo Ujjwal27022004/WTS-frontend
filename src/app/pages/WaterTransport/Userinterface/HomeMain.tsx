@@ -980,9 +980,8 @@ const HomeMain = () => {
   return (
     <>
       <div
-        className={`d-flex ${
-          darkMode ? "bg-dark text-light" : "bg-light text-dark"
-        }`}
+        className={`d-flex ${darkMode ? "bg-dark text-light" : "bg-light text-dark"
+          }`}
         style={{ minHeight: "100vh", transition: "background-color 0.3s ease" }}
       >
         {/* Dashboard */}
@@ -996,13 +995,14 @@ const HomeMain = () => {
         >
           <div className="text-center mb-4">
             <img
-              src="/media/avatars/300-1.jpg"
+              src="https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small_2x/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg"
               alt="Profile"
-              className="rounded-circle mb-2"
+              className="rounded-circle mb-2 mt-8"
               style={{
                 width: "100px",
                 height: "100px",
                 border: "3px solid #fff",
+
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
               }}
             />
@@ -1012,6 +1012,7 @@ const HomeMain = () => {
                 fontSize: "1.2rem",
                 fontWeight: "bold",
                 color: "#2196F3",
+                marginTop: "20px"
               }}
             >
               {user.username}
@@ -1289,13 +1290,12 @@ const HomeMain = () => {
                             </td>
                             <td>
                               <span
-                                className={`badge ${
-                                  query.status === "Resolved"
+                                className={`badge ${query.status === "Resolved"
                                     ? "bg-success"
                                     : query.status === "Pending"
-                                    ? "bg-warning text-dark"
-                                    : "bg-secondary"
-                                }`}
+                                      ? "bg-warning text-dark"
+                                      : "bg-secondary"
+                                  }`}
                               >
                                 {query.status}
                               </span>
@@ -1385,13 +1385,12 @@ const HomeMain = () => {
                             <td>₹{booking.totalPrice}</td>
                             <td>
                               <span
-                                className={`badge ${
-                                  booking.bookingStatus === "Confirmed"
+                                className={`badge ${booking.bookingStatus === "Confirmed"
                                     ? "bg-success"
                                     : booking.bookingStatus === "Pending"
-                                    ? "bg-warning text-dark"
-                                    : "bg-secondary"
-                                }`}
+                                      ? "bg-warning text-dark"
+                                      : "bg-secondary"
+                                  }`}
                               >
                                 {booking.bookingStatus}
                               </span>
@@ -1422,9 +1421,8 @@ const HomeMain = () => {
         {/* Main Content */}
         <div className="container mt-4 flex-grow-1">
           <div
-            className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${
-              darkMode ? "bg-secondary text-white" : "bg-light text-dark"
-            }`}
+            className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${darkMode ? "bg-secondary text-white" : "bg-light text-dark"
+              }`}
           >
             <div
               style={{
@@ -1450,9 +1448,8 @@ const HomeMain = () => {
 
             <div>
               <button
-                className={`btn ${
-                  darkMode ? "btn-light" : "btn-secondary"
-                } me-2`}
+                className={`btn ${darkMode ? "btn-light" : "btn-secondary"
+                  } me-2`}
                 onClick={() => setDarkMode(!darkMode)}
               >
                 Dark Mode
@@ -1579,7 +1576,7 @@ const HomeMain = () => {
                             <p>Humidity: {sourceWeather.main.humidity}%</p>{" "}
                             {/* Humidity */}
                             <p>
-                              Pressure: {sourceWeather.main.pressure} hPa
+                              Pressure: {sourceWeather.main.pressure} hectopascal
                             </p>{" "}
                             {/* Pressure */}
                             <p>Cloudiness: {sourceWeather.clouds.all}%</p>{" "}
@@ -1589,7 +1586,7 @@ const HomeMain = () => {
                               {new Date(
                                 sourceWeather.sys.sunrise * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunrise */}
                             <p>
@@ -1597,7 +1594,7 @@ const HomeMain = () => {
                               {new Date(
                                 sourceWeather.sys.sunset * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunset */}
                             {sourceWeather.rain && (
@@ -1633,7 +1630,7 @@ const HomeMain = () => {
                             <p>Humidity: {destinationWeather.main.humidity}%</p>{" "}
                             {/* Humidity */}
                             <p>
-                              Pressure: {destinationWeather.main.pressure} hPa
+                              Pressure: {destinationWeather.main.pressure} hectopascal
                             </p>{" "}
                             {/* Pressure */}
                             <p>
@@ -1645,7 +1642,7 @@ const HomeMain = () => {
                               {new Date(
                                 destinationWeather.sys.sunrise * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunrise */}
                             <p>
@@ -1653,7 +1650,7 @@ const HomeMain = () => {
                               {new Date(
                                 destinationWeather.sys.sunset * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunset */}
                             {destinationWeather.rain && (
@@ -1674,7 +1671,7 @@ const HomeMain = () => {
                 </div>
               )}
 
-              {error && <div className="alert alert-danger mt-3">{error}</div>}
+              {/* {error && <div className="alert alert-danger mt-3">{error}</div>} */}
               {loading && <p className="mt-3">Loading...</p>}
 
               {ships.length > 0 && (
@@ -1713,9 +1710,23 @@ const HomeMain = () => {
             </div>
           </div>
 
+          <div className={`navbar shadow-sm mb-4 d-flex justify-content-between align-items-center px-3 ${darkMode ? "bg-secondary text-white" : "bg-light text-dark"
+            }`}>
+            <h2 style={{ color: "black", textAlign: "center" }}>Plan your Trip</h2>
+
+
+            <div className="map-container mt-4" style={{ height: "400px", width: "100%", margin: "20px" }}>
+              <iframe
+                src="https://map.openseamap.org"
+                style={{ border: "solid black 2px", height: "100%", width: "100%" }}
+                title="OpenSeaMap"
+              />
+            </div>
+          </div>
+
           {/* Discount Section */}
           <div className="card mt-4">
-            <h4 className="card-header text-white bg-secondary">
+            <h4 className="px-4 py-6 text-center bg-secondary">
               Discounts for You
             </h4>
             <div className="row card-body">

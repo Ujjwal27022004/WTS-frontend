@@ -166,7 +166,7 @@ const CruisePage: React.FC = () => {
       <div className="cruise-cards-container">
         {ships.length > 0 ? (
           ships.map((ship) => (
-            <div key={ship.shipId} className="card mb-4 shadow-sm">
+            <div key={ship.shipId} className="card mb-4 shadow-sm" style={{border:"solid black 2px"}}>
               <div className="row g-0">
                 <div className="col-md-6">
                   <img
@@ -187,7 +187,7 @@ const CruisePage: React.FC = () => {
                     <p className="card-text">CruiseType: {ship.cruiseType}</p>
                     <p className="card-text">Date: {ship.date}</p>
                     <p className="card-text">Availability: {ship.availability}</p>
-                    
+
                     <p className="card-text">
                       <small className="text-muted">Rating: {ship.rating}</small>
                     </p>
@@ -201,9 +201,11 @@ const CruisePage: React.FC = () => {
                 </div>
               </div>
 
+              
+
               {/* OpenSeaMap to display source and destination points */}
-              <div className="map-container mt-4" style={{ height: "100%", width: "100%" }}>
-                <MapContainer center={[20.5937, 78.9629]} zoom={4} style={{ height: "500px", width: "500px" }}>
+              <div className="map-container mt-4" style={{ height: "100%", width: "100%", padding:"20px"}}>
+                <MapContainer center={[0, 0]} zoom={2} style={{ height: "300px", width: "100%" }}>
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
