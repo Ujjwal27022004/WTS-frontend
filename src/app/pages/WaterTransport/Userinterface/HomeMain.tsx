@@ -996,13 +996,14 @@ const HomeMain = () => {
         >
           <div className="text-center mb-4">
             <img
-              src="/media/avatars/300-1.jpg"
+              src="https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small_2x/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg"
               alt="Profile"
-              className="rounded-circle mb-2"
+              className="rounded-circle mb-2 mt-8"
               style={{
                 width: "100px",
                 height: "100px",
                 border: "3px solid #fff",
+                
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
               }}
             />
@@ -1012,6 +1013,7 @@ const HomeMain = () => {
                 fontSize: "1.2rem",
                 fontWeight: "bold",
                 color: "#2196F3",
+                marginTop: "20px"
               }}
             >
               {user.username}
@@ -1674,7 +1676,7 @@ const HomeMain = () => {
                 </div>
               )}
 
-              {error && <div className="alert alert-danger mt-3">{error}</div>}
+              {/* {error && <div className="alert alert-danger mt-3">{error}</div>} */}
               {loading && <p className="mt-3">Loading...</p>}
 
               {ships.length > 0 && (
@@ -1715,7 +1717,7 @@ const HomeMain = () => {
 
           {/* Discount Section */}
           <div className="card mt-4">
-            <h4 className="card-header text-white bg-secondary">
+            <h4 className="px-4 py-6 text-center bg-secondary">
               Discounts for You
             </h4>
             <div className="row card-body">
