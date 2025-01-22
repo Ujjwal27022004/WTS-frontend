@@ -14,6 +14,7 @@ import { App } from "../App";
 import HomeMain from "../pages/WaterTransport/Userinterface/HomeMain";
 import Search from "../pages/WaterTransport/Userinterface/Search";
 import ReceiptPage from "../pages/WaterTransport/Userinterface/ReceiptPage";
+import MapComponent from "../pages/WaterTransport/Userinterface/MapComponent";
 /**
  * Base URL of the website.
  *
@@ -63,6 +64,8 @@ const AppRoutes: FC = () => {
               <Route path="home" element={<HomeMain />} /> {/* HomeMain Route */}
               <Route path="search" element={<Search />} /> {/* Search Route */}
               <Route path="/receipt" element={<ReceiptPage />} />
+              <Route path="map" element={<MapComponent />} />
+              
               <Route index element={<Navigate to="/home" />} />
             </>
           ) : (
