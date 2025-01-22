@@ -1581,7 +1581,7 @@ const HomeMain = () => {
                             <p>Humidity: {sourceWeather.main.humidity}%</p>{" "}
                             {/* Humidity */}
                             <p>
-                              Pressure: {sourceWeather.main.pressure} hPa
+                              Pressure: {sourceWeather.main.pressure} hectopascal
                             </p>{" "}
                             {/* Pressure */}
                             <p>Cloudiness: {sourceWeather.clouds.all}%</p>{" "}
@@ -1591,7 +1591,7 @@ const HomeMain = () => {
                               {new Date(
                                 sourceWeather.sys.sunrise * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunrise */}
                             <p>
@@ -1599,7 +1599,7 @@ const HomeMain = () => {
                               {new Date(
                                 sourceWeather.sys.sunset * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunset */}
                             {sourceWeather.rain && (
@@ -1635,7 +1635,7 @@ const HomeMain = () => {
                             <p>Humidity: {destinationWeather.main.humidity}%</p>{" "}
                             {/* Humidity */}
                             <p>
-                              Pressure: {destinationWeather.main.pressure} hPa
+                              Pressure: {destinationWeather.main.pressure} hectopascal
                             </p>{" "}
                             {/* Pressure */}
                             <p>
@@ -1647,7 +1647,7 @@ const HomeMain = () => {
                               {new Date(
                                 destinationWeather.sys.sunrise * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunrise */}
                             <p>
@@ -1655,7 +1655,7 @@ const HomeMain = () => {
                               {new Date(
                                 destinationWeather.sys.sunset * 1000
                               ).toLocaleTimeString()}{" "}
-                              (UTC)
+                              (IST)
                             </p>{" "}
                             {/* Sunset */}
                             {destinationWeather.rain && (
