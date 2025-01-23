@@ -12,6 +12,7 @@ import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage, useAuth } from "../modules/auth";
 import { App } from "../App";
 import HomeMain from "../pages/WaterTransport/Userinterface/HomeMain";
+import SuccessfulPayment from "../pages/WaterTransport/Userinterface/SuccessfulPayment";
 import Search from "../pages/WaterTransport/Userinterface/Search";
 import ReceiptPage from "../pages/WaterTransport/Userinterface/ReceiptPage";
 import MapComponent from "../pages/WaterTransport/Userinterface/MapComponent";
@@ -58,6 +59,7 @@ const AppRoutes: FC = () => {
         <Route element={<App />}>
           <Route path="error/*" element={<ErrorsPage />} />
           <Route path="logout" element={<Logout />} />
+          <Route path="auth/*" element={<AuthPage />} />
           {auth ? (
             <>
               <Route path="/*" element={<PrivateRoutes />} />
@@ -65,12 +67,12 @@ const AppRoutes: FC = () => {
               <Route path="search" element={<Search />} /> {/* Search Route */}
               <Route path="/receipt" element={<ReceiptPage />} />
               <Route path="map" element={<MapComponent />} />
-              
+              <Route path="/payment-success" element={<SuccessfulPayment />} />
               <Route index element={<Navigate to="/home" />} />
             </>
           ) : (
             <>
-              <Route path="auth/*" element={<AuthPage />} />
+              
               <Route path="*" element={<Navigate to="/auth" />} />
             </>
 
