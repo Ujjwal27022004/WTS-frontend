@@ -416,17 +416,17 @@ const SummaryPage: React.FC = () => {
             // Navigate to the Stripe checkout page
             window.location.href = sessionUrl;
 
-            navigate("/receipt", {
-              state: {
-                cruise: bookingDetails.cruise,
-                numTravelers: bookingDetails.numTravelers,
-                userInfo: bookingDetails.userid,
-                paymentMethod: selectedPaymentMethod,
-                totalAmount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
-                passengers:passengers,
-                receipt:receiptData
-              },
-            });
+            // navigate("/receipt", {
+            //   state: {
+            //     cruise: bookingDetails.cruise,
+            //     numTravelers: bookingDetails.numTravelers,
+            //     userInfo: bookingDetails.userid,
+            //     paymentMethod: selectedPaymentMethod,
+            //     totalAmount: bookingDetails.cruise.price * (bookingDetails.numTravelers || 1),
+            //     passengers:passengers,
+            //     receipt:receiptData
+            //   },
+            // });
           } else {
             alert("Failed to create payment session. Please try again.");
           }
