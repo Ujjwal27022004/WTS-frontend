@@ -1,47 +1,35 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
-import { Passenger } from "../../../../api/Model/WaterTransport/User/Passenger";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getReceipt } from "../../../../api/Service/WaterTransport/User/ReceiptService"
+import { ReceiptDTO } from "../../../../api/Model/WaterTransport/User/Receipt";
 import ChatBotComponent from "./ChatBotComponent";
 
 const ReceiptPage: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [receiptDetails, setReceiptDetails] = useState<ReceiptDTO | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const receiptDetails = location.state as {
-    cruise: {
-      availability: boolean;
-      capacity: number;
-      cruiseLength: number;
-      cruiseType: number;
-      date: string;
-      destination: string;
-      name: string;
-      price: number;
-      rating: number;
-      shipId: number;
-      source: string;
-      id: string;
-      description: string;
-      image: string;
-    };
-    travelDate: string;
-    numTravelers: number;
-    userInfo: {
-      name: string;
-      email: string;
-      phone: string;
-    };
-    paymentMethod: string;
-    totalAmount: number;
-    passengers: Passenger[];
-  };
+  useEffect(() => {
+    const fetchReceipt = async () => {
+      const receiptId = localStorage.getItem("receiptId");
+      // if (!receiptId) {
+      //   navigate("/");
+      //   return;
+      // }
 
-  if (!receiptDetails) {
-    navigate("/");
-    return null;
-  }
+      try {
+        const receiptData = await getReceipt(Number(receiptId));
+        setReceiptDetails(receiptData);
+      } catch (error) {
+        console.error("Error fetching receipt:", error);
+        // navigate("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReceipt();
+  }, [navigate]);
 
   const handleDownloadReceipt = async () => {
     const receiptElement = document.getElementById("receipt");
@@ -55,7 +43,7 @@ const ReceiptPage: React.FC = () => {
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`receipt-${receiptDetails.cruise.id}.pdf`);
+    pdf.save(`receipt-${receiptDetails?.receiptId}.pdf`);
   };
 
   const handleReturnHome = () => {
