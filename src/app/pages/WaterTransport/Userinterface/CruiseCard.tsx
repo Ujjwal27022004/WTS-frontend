@@ -105,6 +105,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import { Icon } from "leaflet"; // For customizing marker icons
 import "leaflet/dist/leaflet.css";
+import "../../../../../public/media/icons/placeholder.png"
 
 import { geocodeLocation } from "./geocodeLocation"; // Import geocode function
 
@@ -217,7 +218,7 @@ const CruisePage: React.FC = () => {
                       {shipCoordinates[ship.shipId].source && (
                         <Marker
                           position={shipCoordinates[ship.shipId].source}
-                          icon={new Icon({ iconUrl: 'https://example.com/source-icon.png', iconSize: [25, 25] })}
+                          icon={new Icon({ iconUrl: "../../../../../public/media/icons/placeholder.png", iconSize: [25, 25] })}
                         >
                           <Popup>{ship.source}</Popup>
                         </Marker>
@@ -225,7 +226,7 @@ const CruisePage: React.FC = () => {
                       {shipCoordinates[ship.shipId].destination && (
                         <Marker
                           position={shipCoordinates[ship.shipId].destination}
-                          icon={new Icon({ iconUrl: 'https://example.com/destination-icon.png', iconSize: [25, 25] })}
+                          icon={new Icon({ iconUrl: "../../../../../public/media/icons/placeholder.png", iconSize: [25, 25] })}
                         >
                           <Popup>{ship.destination}</Popup>
                         </Marker>
