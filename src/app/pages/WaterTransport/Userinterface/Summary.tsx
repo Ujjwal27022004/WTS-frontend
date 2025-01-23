@@ -339,6 +339,7 @@ const SummaryPage: React.FC = () => {
   const [paymentId, setPaymentId] = useState<number | null>(null);
   
   const paymentService = new PaymentService();
+  // const ReceiptService = new ReceiptService();
 
   const bookingDetails = {
     cruise: shipDetails,
@@ -393,30 +394,47 @@ const SummaryPage: React.FC = () => {
           alert("Please select a payment method.");
           return;
         }
+
+
         try {
+
+           const receipt = await generateReceipt(bookingData.userid);
+          const receiptId = String (receipt.receiptId);
+          console.log(receipt)
+
+    
+            if (receipt.receiptId) {
+              // Store userId in localStorage for later use
+              localStorage.setItem("receiptId", receiptId);
+            } else {
+              console.error("User ID is missing in the response.");
+            }
           // Prepare the payload for your backend
           const productRequest = {
             name: bookingDetails.cruise.name,
             amount: bookingDetails.cruise.price * 100, // Amount in smallest currency unit
             quantity: bookingDetails.numTravelers || 1,
             currency: "INR",
-            // successUrl: ${window.location.origin}/metronic8/react/demo8/home
+            successUrl: `${window.location}/metronic8/react/demo8/receipts/${receiptId}`
           };
   
           const payment = await paymentService.initiatePayment( Number (bookingDetails.bookingId), productRequest.amount );
           const { paymentID: paymentIdFromResponse } = payment; // Extract paymentID from the response
           setPaymentID(paymentIdFromResponse); // Set paymentID to state
           console.log(paymentID)
+
+         
+
     
           // Call the backend to create a Stripe session
-          const response = await axios.post("http://localhost:8085/product/v1/checkout", productRequest);
+          const response = await axios.post(`${API_URL}/product/v1/checkout`, productRequest);
           const { sessionUrl } = response.data;
     
           if (sessionUrl) {
             // Navigate to the Stripe checkout page
             window.location.href = sessionUrl;
 
-            navigate("/receipt", {
+            navigate(`/receipts/${receiptId}`, {
               state: {
                 cruise: bookingDetails.cruise,
                 numTravelers: bookingDetails.numTravelers,
